@@ -16,7 +16,7 @@ terraform {
 
 ## variaveis locais
 locals {
-  prefix = var.prefix
+  prefix = "nos"
 }
 
 
@@ -33,10 +33,10 @@ resource "random_pet" "this" {
   separator = "-"
 }
 
-## remote resources
-## google_service_account doc: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account
-resource "google_service_account" "default" {
-  account_id = "${random_pet.this.id}-sa-1"
-  display_name = "random_pet.this.id"
-  project = data.google_project.this.project_id
-}
+# ## remote resources
+# ## google_service_account doc: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account
+# resource "google_service_account" "default" {
+#   account_id = "${random_pet.this.id}-sa-1"
+#   display_name = "random_pet.this.id"
+#   project = data.google_project.this.project_id
+# }

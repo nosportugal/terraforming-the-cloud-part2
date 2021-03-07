@@ -8,6 +8,12 @@ Temas abordados neste modulo:
 * Gestão de alterações: simples, disruptivas e dependentes.
 * Destruição seletiva de recursos
 
+
+## CONTEUDOS A USAR (APAGAR)
+
+* Labels e código para fazer merge a labels
+* Terraform upgrade `tfversion=0.14.7 && tfzip=terraform_${tfversion}_linux_amd64.zip && wget https://releases.hashicorp.com/terraform/$tfversion/$tfzip && unzip $tfzip && sudo mv -f terraform /usr/local/bin/terraform && rm $tfzip`
+
 ## o primeiro contacto
 
 ```bash
