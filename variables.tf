@@ -12,3 +12,9 @@ variable "labels" {
     lab       = "true"
   }
 }
+
+variable "region" {
+  description = "region for region-aware resources"
+  type = string
+  default = "europe-west4"
+}

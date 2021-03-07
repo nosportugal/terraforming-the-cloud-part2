@@ -22,27 +22,72 @@ Temas abordados neste modulo:
   * external-dns
   * workload
 
-## o primeiro contacto
+## 0. setup inicial
 
 ```bash
-# init
+# atualizar o terraform para a ultima versao
+tfversion=0.14.7 && \ 
+  tfzip=terraform_${tfversion}_linux_amd64.zip && \
+  wget https://releases.hashicorp.com/terraform/$tfversion/$tfzip && \
+  unzip $tfzip && \
+  sudo mv -f terraform /usr/local/bin/terraform && \
+  rm $tfzip
+
+# validar a versão do terraform
+terraform --version
+
+# efectuar o login no GCP
+gcloud auth login && gcloud config set project tf-gke-lab-01-np-000001
+
+# init & plan & apply
 terraform init
-
-# plan
 terraform plan -out plan.tfplan
-
-# apply
 terraform apply plan.tfplan
 
-## verificar que o recurso remoto foi criado
-gcloud iam service-accounts list --project=terraform-lab-np-01
+# obter o prefixo unico & guardar numa variavel
+my_identifier=$(terraform output my_identifier)
+echo $my_identifier
+```
 
+## 1. criar a VPC
+
+* No ficheiro [./vpc.tf](./vpc.tf) encontram-se as definições da VPC a usar
+
+**Descomentar as seguintes resources**
+
+```t
+# vpc
+resource "google_compute_network" "default"
+# subnet
+resource "google_compute_subnetwork" "default"
+```
+## 2. GKE
+
+### 2.1 GKE subnet
+
+### 2.2 GKE cluster
+
+## 3. terraform modules 
+
+### 3.1 DNS module
+
+
+
+
+## 4. wrap-up & destroy
+
+Destruir os conteúdos!
+
+```bash
 # destroy
 terraform destroy
-
-## verificar que o recurso remoto foi destruido
-gcloud iam service-accounts list --project=terraform-lab-np-01
 ```
+
+
+
+
+
+
 
 ## lidar com as alterações
 
