@@ -10,6 +10,7 @@
 .terraform-backend.tfvars
 *.tfplan
 plan
+*.tfstate*
 
 # Crash log files
 crash.log

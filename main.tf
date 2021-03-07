@@ -5,6 +5,11 @@ terraform {
   backend "local" {
     path = "terraform.tfstate"
   }
+  # backend "artifactory" {
+  #   url = "https://artifactory.nosinovacao.pt/artifactory"
+  #   repo = "terraform-ccoe"
+  #   subpath = "labs/tf-gke-lab-01"
+  # }
 
   required_providers {
     google = {
@@ -12,11 +17,6 @@ terraform {
       version = ">= 3.58.0"
     }
   }
-}
-
-## variaveis locais
-locals {
-  prefix = "nos"
 }
 
 
@@ -29,7 +29,6 @@ data "google_project" "this" {
 ## local resources
 resource "random_pet" "this" {
   length = 2
-  prefix = local.prefix
   separator = "-"
 }
 

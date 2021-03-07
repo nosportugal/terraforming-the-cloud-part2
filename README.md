@@ -13,6 +13,14 @@ Temas abordados neste modulo:
 
 * Labels e código para fazer merge a labels
 * Terraform upgrade `tfversion=0.14.7 && tfzip=terraform_${tfversion}_linux_amd64.zip && wget https://releases.hashicorp.com/terraform/$tfversion/$tfzip && unzip $tfzip && sudo mv -f terraform /usr/local/bin/terraform && rm $tfzip`
+* As 3 coisas que são necessárias para criar um GKE cluster
+  * vpc
+  * node_pools 
+  * dns (optional)
+* no GKE cluster, é essencial criar o seguinte:
+  * cert-manager
+  * external-dns
+  * workload
 
 ## o primeiro contacto
 
