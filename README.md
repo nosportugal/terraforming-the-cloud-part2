@@ -2,12 +2,12 @@
 
 Temas abordados neste modulo:
 
-* Os 4 principais comandos de terraform: `init`, `plan`, `apply` e `destroy`
-* Utilização de `variable`, `data`, `resource` e `output`
-* `terrafom.tfvars` é usado por defeito se tiver presente na mesma dir
-* Gestão de alterações: simples, disruptivas e dependentes.
-* Destruição seletiva de recursos
-
+* Criação de VPCs
+* Utilização de algumas funções de Terraform
+* Criação de clusters GKE
+* Aprovisionamento de recuros em GKE recorrendo providers de terraform
+* Criação de zonas de DNS
+* Criação de modulos de Terraform
 
 ## CONTEUDOS A USAR (APAGAR)
 
