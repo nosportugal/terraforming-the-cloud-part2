@@ -237,3 +237,12 @@ Destruir os conteúdos!
 # destroy
 terraform destroy
 ```
+
+* **Nota:** existe um bug/feature em que o terraform nao é capaz de destruir a VPC porque existe um network-endpoint-group associado (é o public LB do ingress). Será necessário remover os NEGs à mao para o destroy funcionar.
+
+```bash
+# listar
+gcloud compute network-endpoint-groups list
+# apagar
+gcloud compute network-endpoint-groups delete <id>
+```
