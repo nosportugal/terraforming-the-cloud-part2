@@ -39,6 +39,7 @@ resource "google_container_cluster" "default" {
   initial_node_count       = 2
 
   node_config {
+    # https://cloud.google.com/compute/docs/machine-types
     machine_type = "e2-standard-2"
     image_type   = "cos_containerd"
   }
@@ -88,7 +89,8 @@ resource "google_container_cluster" "default" {
   lifecycle {
     ## Se repararem nisto e eu não explicar, por favor avisem 😅
     ignore_changes = [
-      node_pool
+      node_pool,
+      node_config
     ]
   }
 }

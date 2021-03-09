@@ -6,7 +6,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.allow-http: "true"
     #ingress.gcp.kubernetes.io/pre-shared-cert: hipsterexternal-tls
-    #networking.gke.io/v1beta1.FrontendConfig: hipsterexternal-ssl-config # this is required if we want to enforce SSL policies
     #cert-manager.io/cluster-issuer: letsencrypt
 spec:
   rules:
@@ -18,14 +17,5 @@ spec:
             servicePort: 80
   # tls:
   #  - hosts:
-  #    - ${hipster_fqdn}
+  #    - hipster.${fqdn}
   #    secretName: hipster-tls-secret
-# ---
-## this is required if we want to enforce SSL policies (version, etc...)
-#  apiVersion: networking.gke.io/v1beta1
-#  kind: FrontendConfig
-#  metadata:
-#    name: hipsterexternal-ssl-config
-#    namespace: hipster-demo
-#  spec:
-#    sslPolicy: restricted
