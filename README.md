@@ -3,24 +3,10 @@
 Temas abordados neste modulo:
 
 * Criação de VPCs
-* Utilização de algumas funções de Terraform
-* Criação de clusters GKE
-* Aprovisionamento de recuros em GKE recorrendo providers de terraform
-* Criação de zonas de DNS
 * Criação de modulos de Terraform
+* Criação de cluster GKE
+* Criação de zonas de DNS
 
-## CONTEUDOS A USAR (APAGAR)
-
-* Labels e código para fazer merge a labels
-* Terraform upgrade `tfversion=0.14.7 && tfzip=terraform_${tfversion}_linux_amd64.zip && wget https://releases.hashicorp.com/terraform/$tfversion/$tfzip && unzip $tfzip && sudo mv -f terraform /usr/local/bin/terraform && rm $tfzip`
-* As 3 coisas que são necessárias para criar um GKE cluster
-  * vpc
-  * node_pools 
-  * dns (optional)
-* no GKE cluster, é essencial criar o seguinte:
-  * cert-manager
-  * external-dns
-  * workload
 
 ## 0. setup inicial
 
@@ -55,24 +41,175 @@ echo $my_identifier
 
 **Descomentar as seguintes resources**
 
-```t
+```bash
 # vpc
 resource "google_compute_network" "default"
 # subnet
 resource "google_compute_subnetwork" "default"
 ```
-## 2. GKE
+
+**Plan & Apply**
+```bash
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+```
+*Validar the a VPC foi criada com a respetiva subnet...*
+
+## 2. Modules & GKE
+
+Neste capitulo iremos usar terraform modules para instanciar o GKE.
+
+*[Como funcionam os modules?](https://www.terraform.io/docs/language/modules/syntax.html)*
+
 
 ### 2.1 GKE subnet
 
-### 2.2 GKE cluster
+**Vamos precisar de uma subnet!**
+* No ficheiro [./vpc.tf](./vpc.tf) encontram-se as definições da VPC a usar para o K8s
+* Também poderiamos configurar a subnet no modulo, mas dificulta a gestão transversal da VPC
 
-## 3. terraform modules 
+```bash
+# descomentar a seguinte resource
+resource "google_compute_subnetwork" "gke"
 
-### 3.1 DNS module
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+```
 
+### 2.2 GKE module
 
+* No ficheiro [./gke.tf](./gke.tf) encontra-se a definição do module
+* Por cada module é preciso fazer `terraform init`
 
+```bash
+# descomentar o module
+module "gke"
+
+# inicializar o modulo
+terraform init
+
+# plan & apply (vai demorar 5 minutos aprox)
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+```
+
+* Após o cluster estar UP, basta dirigirem-se a esta pagina: <https://console.cloud.google.com/kubernetes/list?project=tf-gke-lab-01-np-000001>
+* Seleccionam o vosso cluster e voila!
+* Mas e se nós gerarmos a configuração automaticamente...?
+
+### 2.3 Kubeconfig module (module inside a module)
+
+* Nesta secção iremos abordar a utilização de modulos dentro de modules
+* Não existe limitações na profundidade das dependências, porém, é preciso ter senso comum para evitar exageros pois o perfeccionismo é um inimigo da funcionalidade.
+* A desvantagem é que apenas é possível passar raw-values, sendo sempre necessário obter o data-object caso queiramos aceder a uma resource
+
+**Objectivo: obter a configuração `kubeconfig.yaml` de acesso ao cluster automaticamente**
+
+* No ficheiro [./modules/gke/kubeconfig.tf](./modules/gke/kubeconfig.tf) encontra-se a definição do module
+* **Não esquecer**: cada module novo é preciso fazer `terraform init`
+
+```bash
+# descomentar o modulo kubeconfig e o respetivo output
+# module "kubeconfig"
+# output "gke_kubeconfig"
+
+# init
+terraform init
+
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+```
+
+**O que está a faltar? Continuamos sem instruções de utilização do `kubeconfig`...😡**
+
+* *O main module também tem que emitir o valor...*
+
+**No ficheiro [./gke.tf](./gke.tf) é necessário adicionar o novo `output` proveniente do module**
+
+```bash
+# descomentar o output
+# output "gke_kubeconfig"
+
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+
+# deverá existir um output identico a
+export KUBECONFIG=kubeconfig.yaml
+
+# se tiverem o `kubectl` instalado, basta fazerem isto para testarem o acesso ao cluster
+kubectl get nodes
+```
+
+### 2.4. Vamos por workloads a correr?
+
+* Nesta parte iremos usar o kubectl para instanciar uma aplicação de demo
+* O objectivo será fazer um port-forward para testar app
+
+```bash
+# testar que chegamos ao cluster
+kubectl get nodes
+kubectl version
+
+# vamos aplicar o hipster-demo
+kubectl apply -f ./k8s/hipster-demo
+
+# vamos aguardar que a aplicação inicie (apenas termina quando o pod load-generator tiver corrido com sucesso)
+kubectl get pods -n hipster-demo -w
+
+# obter os serviços e obter o porto do frontend
+kubectl get services -n hipster-demo | grep frontend
+
+# fazer o port-forward
+kubectl port-forward -n hipster-demo service/frontend 8001:80
+```
+
+**Após este passo, basta testar a aplicação no port-foward que foi estabelecido no seguinte url: <http://localhost:8001>**
+
+Portanto, conseguimos validar que os workloads estao a funcionar.
+* O próximo passo será expor a partir dos ingresses e respectivos load-balancers do GKE
+* Para isso precisamos de um DNS para HTTP/HTTPS
+* Caso queiramos usar HTTPS vamos também precisar de um certificado
+
+## 3. DNS for HTTPS and auto-certificate generation
+
+**Next time?**
+
+### 3.1 Criar a zona de DNS
+
+* No ficheiro [./dns.tf](./dns.tf) encontra-se a definição do module
+* **Não esquecer**: cada module novo é preciso fazer `terraform init`
+
+```bash
+# descomentar o modulo e o output
+module "dns"
+output "fqdn"
+
+# init
+terraform init
+
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+```
+
+### 3.2 Testar o ingress
+
+* No ficheiro [./k8s/hipster-demo/ingress/65-frontend-ingress.yaml](./k8s/hipster-demo/ingress/65-frontend-ingress.yaml) encontra-se a definição do ingress
+* Será preciso substituir `hipster.${fqdn}` pelo fqdn do nosso DNS
+
+```bash
+# agora é so aplicar o ingress
+kubectl apply -f ./k8s/hipster-demo/ingress/65-frontend-ingress.yaml
+
+# obter o estado dos ingresses
+kubectl get ingress -n hipster-demo
+kubectl describe -n hipster-demo hipster-ingress
+```
+
+* após um bocado, será possivel navegar pelo endereço final <https://hipster.fqdn>
 
 ## 4. wrap-up & destroy
 
@@ -80,168 +217,5 @@ Destruir os conteúdos!
 
 ```bash
 # destroy
-terraform destroy
-```
-
-
-
-
-
-
-
-## lidar com as alterações
-
-Assegurar que os recursos foram devidamente destruidos: `terraform destroy`
-
-Recriar os recursos:
-
-```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply
-terraform apply plan.tfplan
-```
-
-**Introduzindo alterações:**
-
-- Editar o ficheiro `main.tf`, localizar o recurso `google_service_account.default` e alterar o campo `display_name`.
-- Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
-- Localizar o recurso `google_service_account.default` e alterar o campo `account_id`
-- Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `replacement` - é uma alteração disruptiva.
-
-Aplicar o plan:
-```bash
-terraform apply plan.tfplan
-```
-
-**As alterações também podem ser derivadas de dependêndencias, e quando isso acontece, todo o grafo de dependendencias é afetado.**
-
-- Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix`
-
-Executar o `plan` e verificar todo o grafo de dependencias é afetado
-```bash
-# plan & observe
-terraform plan -out plan.tfplan
-
-# apply & observe
-terraform apply plan.tfplan
-```
-*Notem que apenas alterámos uma mera variável...*
-
-No final, destruir os recursos criados: `terraform destroy`
-
-## destruir seletivamente
-
-Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`
-
-Recriar os recursos:
-
-```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply
-terraform apply plan.tfplan
-```
-
-Destruir apenas o recurso `google_service_account.default`:
-```bash
-# ler o aviso do terraform antes de aceitar
-terraform destroy -target="google_service_account.default"
-```
-
-No final, destruir os recursos criados: `terraform destroy`
-
-## importar recursos já existentes
-
-
-Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`
-
-Recriar os recursos:
-
-```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply
-terraform apply plan.tfplan
-```
-
-Agora vamos criar uma `service_account` usando cliente `gcloud` e depois vamos importar esse recurso para o nosso terraform state.
-
-Uma vez que o identificador é gerado aleatoriamente, vamos adicionar novos `outputs` ao terraform por forma a obter um valor calculado deterministicamente, para usar posteriormente:
-
-Acrescentar o seguinte conteudo ao ficheiro `outputs.tf`:
-```bash
-output "imported_service_account_id" {
-    value = "${random_pet.this.id}-imported"
-}
-
-output "imported_service_account_id_path" {
-    value = "projects/${var.project_id}/serviceAccounts/${random_pet.this.id}-imported@${var.project_id}.iam.gserviceaccount.com"
-}
-```
-
-`plan` e `apply`:
-```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply
-terraform apply plan.tfplan
-```
-Observando o resultado, temos novos outputs.
-
-Podemos obter os valores usando o `terraform output`:
-
-Obter o valor do `imported_service_account_id`:
-```bash
-terraform output imported_service_account_id
-```
-
-Com esse valor, vamos criar então a `service_account`:
-
-```bash
-# criar a service_account
-gcloud iam service-accounts --project=terraform-lab-np-01 create $(terraform output imported_service_account_id)
-```
-
-Agora que temos um recurso "rogue", podemos então importa-lo.
-
-Antes de importar, é preciso criar o recurso.
-* No ficheiro `main.tf` acrescentar o seguinte no final do ficheiro:
-```bash
-resource "google_service_account" "imported" {
-  account_id = "${random_pet.this.id}-imported"
-  project = data.google_project.this.project_id
-}
-``` 
-Neste momento, se executarmos o `plan` o terraform vai tentar criar o recurso, pois não sabe que existe um igual já criado. Se por ventura avançarmos com a criação, esta vai falhar devido a um conflito.
-
-```bash
-terraform plan -out plan.tfplan
-```
-
-Por esse motivo, é que o temos que importar para o estado primeiro.
-
-Agora podemos proceder à importação do recurso:
-
-```bash
-terraform import google_service_account.imported "$(terraform output imported_service_account_id_path)"
-```
-
-Se tudo correr bem, o recurso foi importado com sucesso, e passou agora a ser gerido pelo state do terraform. 
-
-**Todas as futuras alterações a este recurso passam a ser feitas por Terraform.**
-
-Se executarmos o `plan` é possível confirmar que não existem alterações:
-
-```bash
-terraform plan -out plan.tfplan
-```
-
-No final, destruir os recursos criados: 
-```bash
 terraform destroy
 ```

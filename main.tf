@@ -14,7 +14,6 @@ terraform {
   }
 }
 
-
 ## referenciar um recurso já existente
 ## ref: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project
 data "google_project" "this" {
