@@ -195,18 +195,20 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-### 3.2 Testar o ingress
+### 3.2 Criar e testar o ingress
 
-* No ficheiro [./k8s/hipster-demo/ingress/65-frontend-ingress.yaml](./k8s/hipster-demo/ingress/65-frontend-ingress.yaml) encontra-se a definição do ingress
-* Será preciso substituir `hipster.${fqdn}` pelo fqdn do nosso DNS
+* No ficheiro [./gke.tf](./gke.tf) iremos descomentar a secção 3.2
 
 ```bash
-# agora é so aplicar o ingress
-kubectl apply -f ./k8s/hipster-demo/ingress/65-frontend-ingress.yaml
+# descomentar os seguintes
+data "template_file" "hipster_ingress"
+resource "local_file" "hipster_ingress"
 
-# obter o estado dos ingresses
+# criar o ingress
+kubectl apply -f ./k8s/hipster-demo/.
+
+# obter o fqdn e o ip publico
 kubectl get ingress -n hipster-demo
-kubectl describe -n hipster-demo hipster-ingress
 ```
 
 * após um bocado, será possivel navegar pelo endereço final <https://hipster.fqdn>

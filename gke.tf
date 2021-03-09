@@ -14,7 +14,6 @@
 
 
 ## 3.2 Criar e testar um ingress
-
 # data "template_file" "hipster_ingress" {
 #   template = file("./templates/hipster-ingress-template.yaml")
 
