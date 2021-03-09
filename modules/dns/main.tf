@@ -34,9 +34,19 @@ resource "google_dns_managed_zone" "this" {
 resource "google_dns_record_set" "parent_ns" {
   managed_zone = data.google_dns_managed_zone.lab_01_clg_nos_pt.name
   project      = data.google_dns_managed_zone.lab_01_clg_nos_pt.project
-  
-  name         = local.fqdn
-  type         = "NS"
-  ttl          = 300
-  rrdatas      = google_dns_managed_zone.this.name_servers
+
+  name    = local.fqdn
+  type    = "NS"
+  ttl     = 300
+  rrdatas = google_dns_managed_zone.this.name_servers
 }
+
+# resource "google_dns_record_set" "hipster" {
+#   project      = data.google_project.this.name
+#   managed_zone = google_dns_managed_zone.this.name
+
+#   name    = "hipster.${google_dns_managed_zone.this.dns_name}"
+#   type    = "A"
+#   ttl     = 300
+#   rrdatas = ["ingress-public-ip-here"]
+# }

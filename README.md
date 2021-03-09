@@ -206,9 +206,25 @@ resource "local_file" "hipster_ingress"
 
 # criar o ingress
 kubectl apply -f ./k8s/hipster-demo/.
+```
 
+* Antes de testar o ingress, temos que criar a entrada no dns para apontar para o ip publico
+
+```bash
 # obter o fqdn e o ip publico
 kubectl get ingress -n hipster-demo
+
+# no modulo de DNS, no main.tf, descomentar a resource relativa ao A Record
+# popular com o ip do ingress. Exemplo:
+resource "google_dns_record_set" "hipster" {
+  project      = data.google_project.this.name
+  managed_zone = google_dns_managed_zone.this.name
+
+  name    = "hipster.${google_dns_managed_zone.this.dns_name}"
+  type    = "A"
+  ttl     = 300
+  rrdatas = ["ingress-public-ip-here"]
+}
 ```
 
 * após um bocado, será possivel navegar pelo endereço final <https://hipster.fqdn>
