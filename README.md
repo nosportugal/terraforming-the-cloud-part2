@@ -8,28 +8,26 @@ Temas abordados neste modulo:
 * Criação de zonas de DNS
 
 
-## 0. setup inicial
+## 0. preparar o ambiente
+
+**autenticar a consola com o GCP**
+- Abrir o endereço <https://console.cloud.google.com> e autenticar
 
 ```bash
-# atualizar o terraform para a ultima versao
-tfversion=0.14.7 && \ 
-  tfzip=terraform_${tfversion}_linux_amd64.zip && \
-  wget https://releases.hashicorp.com/terraform/$tfversion/$tfzip && \
-  unzip $tfzip && \
-  sudo mv -f terraform /usr/local/bin/terraform && \
-  rm $tfzip
+gcloud config set project tf-gke-lab-01-np-000001
+``` 
 
-# validar a versão do terraform
-terraform --version
+**clonar o projecto git que vamos usar**
+```bash
+git clone https://github.com/nosportugal/terraforming-the-cloud-part2 && cd terraforming-the-cloud-part2
+```
 
-# efectuar o login no GCP
-gcloud auth login && gcloud config set project tf-gke-lab-01-np-000001
+**obter e instalar a versão do terraform que vamos usar**
+```bash
+sudo scripts/install-terraform.sh
+```
 
-# init & plan & apply
-terraform init
-terraform plan -out plan.tfplan
-terraform apply plan.tfplan
-
+```bash
 # obter o prefixo unico & guardar numa variavel
 my_identifier=$(terraform output my_identifier)
 echo $my_identifier
