@@ -37,8 +37,22 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 
 # obter o prefixo unico & guardar numa variavel (vamos precisar disto mais à frente)
-my_identifier=$(terraform output my_identifier)
+my_identifier=$(terraform output -raw my_identifier)
 echo $my_identifier
+```
+
+**facilitar a leitura dos ficheiros terraform em ambiente cloudshell**
+Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`. 
+
+Apesar de não ser ideal, é melhor do que não ter nada e ajuda bastante!
+
+- Com o editor aberto, carregar em `CTRL+,` para abrir as definições
+- Procurar por `File Associations` e de seguida `Open settings.json`
+- Garantir o seguinte bloco de `files.associations`:
+```json
+"files.associations": {
+    "**/*.tf": "ini"
+}
 ```
 
 ## 1. criar a VPC
