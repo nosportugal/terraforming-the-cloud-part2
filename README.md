@@ -73,7 +73,11 @@ resource "google_compute_subnetwork" "default"
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
+
 *Validar the a VPC foi criada com a respetiva subnet...*
+```bash
+gcloud compute networks list
+```
 
 ## 2. Modules & GKE
 
@@ -183,10 +187,10 @@ kubectl get pods -n hipster-demo -w
 kubectl get services -n hipster-demo | grep frontend
 
 # fazer o port-forward
-kubectl port-forward -n hipster-demo service/frontend 8001:80
+kubectl port-forward -n hipster-demo service/frontend 8080:80
 ```
 
-**Após este passo, basta testar a aplicação no port-foward que foi estabelecido no seguinte url: <http://localhost:8001>**
+**Após este passo, basta testar a aplicação no port-foward que foi estabelecido no seguinte url: <http://localhost:8080>**
 
 Portanto, conseguimos validar que os workloads estao a funcionar.
 * O próximo passo será expor a partir dos ingresses e respectivos load-balancers do GKE
