@@ -271,7 +271,7 @@ kubectl delete -f ./k8s/hipster-demo/.
 terraform destroy
 ```
 
-* **Nota:** existe um bug/feature em que o terraform nao é capaz de destruir a VPC porque existe um network-endpoint-group associado (é o public LB do ingress). 
+* **Nota:** se o destroy der erro é porque o terraform não consegue apagar um recurso devido a dependências externas. Isto pode acontecer devido aos recursos que foram criados pela ferramenta `kubectl`.
   * Se for este o caso, então será necessário remover os NEGs à mao para o destroy funcionar.
 
 ```bash
