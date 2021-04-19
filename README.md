@@ -198,7 +198,7 @@ Portanto, conseguimos validar que os workloads estao a funcionar.
 * Para isso precisamos de um DNS para HTTP/HTTPS
 * Caso queiramos usar HTTPS vamos também precisar de um certificado SSL
 
-## 3. DNS for HTTPS and auto-certificate generation
+## 3. DNS
 
 ### 3.1 Criar a zona de DNS
 
@@ -255,7 +255,11 @@ após um bocado, será possivel navegar pelo endereço final que podem obter atr
 echo "http://hipster.$(terraform output -raw fqdn)"
 ```
 
-## 4. wrap-up & destroy
+## 4. HTTPS e geração de certificados
+
+Fica para outro dia... 😥
+
+## 5. wrap-up & destroy
 
 Destruir os conteúdos!
 
