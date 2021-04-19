@@ -1,4 +1,4 @@
-# terraform-gcp-gke-lab-01
+# terraforming the cloud - part 2
 
 Temas abordados neste modulo:
 
