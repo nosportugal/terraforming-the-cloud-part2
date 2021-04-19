@@ -135,8 +135,8 @@ terraform apply plan.tfplan
 
 ```bash
 # descomentar o modulo kubeconfig e o respetivo output
-# module "kubeconfig"
-# output "gke_kubeconfig"
+module "kubeconfig"
+output "gke_kubeconfig"
 
 # init
 terraform init
@@ -154,7 +154,7 @@ terraform apply plan.tfplan
 
 ```bash
 # descomentar o output
-# output "gke_kubeconfig"
+output "gke_kubeconfig"
 
 # plan & apply
 terraform plan -out plan.tfplan
@@ -190,16 +190,15 @@ kubectl get services -n hipster-demo | grep frontend
 kubectl port-forward -n hipster-demo service/frontend 8080:80
 ```
 
-**Após este passo, basta testar a aplicação no port-foward que foi estabelecido no seguinte url: <http://localhost:8080>**
+* Após este passo, basta testar a aplicação no port-foward que foi estabelecido no seguinte url: <http://localhost:8080>
+* Se estiverem a usar a Google CloudShell podem clicar em `Preview on Port 8080` no canto superior direito.
 
 Portanto, conseguimos validar que os workloads estao a funcionar.
 * O próximo passo será expor a partir dos ingresses e respectivos load-balancers do GKE
 * Para isso precisamos de um DNS para HTTP/HTTPS
-* Caso queiramos usar HTTPS vamos também precisar de um certificado
+* Caso queiramos usar HTTPS vamos também precisar de um certificado SSL
 
 ## 3. DNS for HTTPS and auto-certificate generation
-
-**Next time?**
 
 ### 3.1 Criar a zona de DNS
 
@@ -219,39 +218,42 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-### 3.2 Criar e testar o ingress
+### 3.2 Criar um ponto de entrada (ingress) para o site
 
-* No ficheiro [./gke.tf](./gke.tf) iremos descomentar a secção 3.2
+* No ficheiro [./gke.tf](./gke.tf) iremos descomentar a secção 3.2 que irá permitir que o site seja acessível via internet como se estivesse em produção.
 
 ```bash
 # descomentar os seguintes
 data "template_file" "hipster_ingress"
 resource "local_file" "hipster_ingress"
 
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+
 # criar o ingress
 kubectl apply -f ./k8s/hipster-demo/.
 ```
 
-* Antes de testar o ingress, temos que criar a entrada no dns para apontar para o ip publico
+### 3.3 Criar um registo de DNS para o aceder ao site
+
+* Antes de testar o site, temos que criar a entrada no dns para apontar para o ip publico
 
 ```bash
 # obter o fqdn e o ip publico
 kubectl get ingress -n hipster-demo
 
 # no modulo de DNS, no main.tf, descomentar a resource relativa ao A Record
-# popular com o ip do ingress. Exemplo:
-resource "google_dns_record_set" "hipster" {
-  project      = data.google_project.this.name
-  managed_zone = google_dns_managed_zone.this.name
+resource "google_dns_record_set" "hipster"
 
-  name    = "hipster.${google_dns_managed_zone.this.dns_name}"
-  type    = "A"
-  ttl     = 300
-  rrdatas = ["ingress-public-ip-here"]
-}
+# de seguida, substituir a seguinte secção pelo IP que obtiveram no comando acima
+rrdatas = ["INSERIR_AQUI_O_VOSSO_IP_PUBLICO"]
 ```
 
-* após um bocado, será possivel navegar pelo endereço final <https://hipster.fqdn>
+após um bocado, será possivel navegar pelo endereço final que podem obter através do seguinte comando:
+```bash
+echo "http://hipster.$(terraform output -raw fqdn)"
+```
 
 ## 4. wrap-up & destroy
 

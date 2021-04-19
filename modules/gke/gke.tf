@@ -12,14 +12,6 @@ locals {
     workload_identity_config = {
       identity_namespace = "${data.google_project.this.project_id}.svc.id.goog"
     }
-
-    # primary_pool = {
-    #   name         = "primary-pool"
-    #   machine_type = "e2-standard-2"
-    #   disk_size_gb = "50"
-    #   image_type   = "cos_containerd"
-    #   preemptible  = true
-    # }
   }
 }
 
