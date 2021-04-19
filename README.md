@@ -15,7 +15,9 @@ Temas abordados neste modulo:
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
-``` 
+
+## NOTA: para utilizadores do vscode devem executar "gcloud auth login" primeiro
+```
 
 **clonar o projecto git que vamos usar**
 ```bash
@@ -27,8 +29,14 @@ git clone https://github.com/nosportugal/terraforming-the-cloud-part2 && cd terr
 sudo scripts/install-terraform.sh
 ```
 
+**inicializar o terraform**
 ```bash
-# obter o prefixo unico & guardar numa variavel
+# init & plan & apply
+terraform init
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+
+# obter o prefixo unico & guardar numa variavel (vamos precisar disto mais à frente)
 my_identifier=$(terraform output my_identifier)
 echo $my_identifier
 ```
