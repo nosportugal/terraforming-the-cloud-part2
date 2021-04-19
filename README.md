@@ -260,11 +260,15 @@ echo "http://hipster.$(terraform output -raw fqdn)"
 Destruir os conteúdos!
 
 ```bash
+# primeiro temos que eliminar os conteudos criados pelo kubectl
+kubectl delete -f ./k8s/hipster-demo/.
+
 # destroy
 terraform destroy
 ```
 
-* **Nota:** existe um bug/feature em que o terraform nao é capaz de destruir a VPC porque existe um network-endpoint-group associado (é o public LB do ingress). Será necessário remover os NEGs à mao para o destroy funcionar.
+* **Nota:** existe um bug/feature em que o terraform nao é capaz de destruir a VPC porque existe um network-endpoint-group associado (é o public LB do ingress). 
+  * Se for este o caso, então será necessário remover os NEGs à mao para o destroy funcionar.
 
 ```bash
 # listar
