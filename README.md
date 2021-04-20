@@ -24,9 +24,13 @@ gcloud config set project tf-gke-lab-01-np-000001
 git clone https://github.com/nosportugal/terraforming-the-cloud-part2 && cd terraforming-the-cloud-part2
 ```
 
-**obter e instalar a versão do terraform que vamos usar**
+**obter e instalar a versão do terraform e kubectl que vamos usar**
 ```bash
+# terraform
 sudo scripts/install-terraform.sh
+
+# kubectl
+sudo scripts/install-kubectl.sh
 ```
 
 **inicializar o terraform**
