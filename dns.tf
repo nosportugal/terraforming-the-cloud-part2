@@ -6,5 +6,5 @@ module "dns" {
 }
 
 output "fqdn" {
-  value = module.dns.fqdn
+  value = trim(module.dns.fqdn,".")
 }

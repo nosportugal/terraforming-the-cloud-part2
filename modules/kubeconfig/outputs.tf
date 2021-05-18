@@ -1,3 +1,3 @@
-output "gke_kubeconfig" {
-  value = "export KUBECONFIG=$(pwd)/${local.kubeconfig_filename}"
+output "gke_kubeconfig_filename" {
+  value = local.kubeconfig_filename
 }

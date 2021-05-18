@@ -6,6 +6,6 @@ module "kubeconfig" {
   region     = google_container_cluster.default.location
 }
 
-output "gke_kubeconfig" {
-  value = module.kubeconfig.gke_kubeconfig
+output "gke_kubeconfig_filename" {
+  value =  module.kubeconfig.gke_kubeconfig_filename
 }
