@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: hipster-ingress
+  namespace: hipster-demo
+  annotations:
+    kubernetes.io/ingress.allow-http: "true"
+    #ingress.gcp.kubernetes.io/pre-shared-cert: hipsterexternal-tls
+    #cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  rules:
+    - host: hipster.immortal-owl.lab-01.clg.nos.pt
+      http:
+        paths:
+        - backend:
+            serviceName: frontend
+            servicePort: 80
+  # tls:
+  #  - hosts:
+  #    - hipster.immortal-owl.lab-01.clg.nos.pt
+  #    secretName: hipster-tls-secret

@@ -120,11 +120,15 @@ terraform init
 # plan & apply (vai demorar 5 minutos aprox)
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
+
+# podem consultar os clusters ativos assim
+gcloud container clusters list --project tf-gke-lab-01-np-000001 | grep $(terraform output -raw my_identifier)
 ```
 
 * Após o cluster estar UP, basta dirigirem-se a esta pagina: <https://console.cloud.google.com/kubernetes/list?project=tf-gke-lab-01-np-000001>
 * Seleccionam o vosso cluster e voila!
 * Mas e se nós gerarmos a configuração automaticamente...?
+
 
 ### 2.3 Kubeconfig module (module inside a module)
 
@@ -252,6 +256,10 @@ resource "google_dns_record_set" "hipster"
 
 # de seguida, substituir a seguinte secção pelo IP que obtiveram no comando acima
 rrdatas = ["INSERIR_AQUI_O_VOSSO_IP_PUBLICO"]
+
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
 ```
 
 após um bocado, será possivel navegar pelo endereço final que podem obter através do seguinte comando:
