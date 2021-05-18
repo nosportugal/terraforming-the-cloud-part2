@@ -4,17 +4,17 @@ variable "project_id" {
   type        = string
 }
 
-variable "labels" {
-  description = "A set of key/value label pairs to assign to the project."
-  type        = map(string)
-  default = {
-    terraform = "true"
-    lab       = "true"
-  }
-}
-
 variable "region" {
   description = "region for region-aware resources"
   type = string
   default = "europe-west4"
+}
+
+variable "sa_gke_dns" {
+  type = string
+}
+
+variable "user_prefix" {
+  type = string
+  
 }

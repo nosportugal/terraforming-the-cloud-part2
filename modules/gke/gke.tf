@@ -60,6 +60,10 @@ resource "google_container_cluster" "default" {
   vertical_pod_autoscaling {
     enabled = true
   }
+
+  workload_identity_config {
+    identity_namespace = "${data.google_project.this.project_id}.svc.id.goog"
+  }
 }
 
 resource "google_container_node_pool" "default" {

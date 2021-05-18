@@ -1,6 +1,3 @@
-
-
-
 terraform {
   required_providers {
     kubectl = {
@@ -13,7 +10,8 @@ terraform {
 locals {
   gke_kubeconfig_filename = var.gke_kubeconfig_filename
   fqdn = trim(var.fqdn, ".")
-  kube_ingress_manifest = "templates/hipster-ingress-template.yaml"
+  gke_default_endpoint = var.gke_default_endpoint
+  gke_ca_certificate = var.gke_ca_certificate
 }
 
 # usar o kubectl provider através de um kubeconfig
@@ -26,8 +24,8 @@ provider "kubectl" {
 ## usar o kubectl provider através do certificado - NÃO DESCOMENTAR: exemplo apenas
 # data "google_client_config" "this" {}
 # provider "kubectl" {
-#   host                   = module.gke.gke_default_endpoint
-#   cluster_ca_certificate = base64decode(module.gke.gke_ca_certificate)
+#   host                   = local.gke_default_endpoint
+#   cluster_ca_certificate = base64decode(local.gke_ca_certificate)
 #   token                  = data.google_client_config.this.access_token
 #   load_config_file = false
 # }
@@ -58,22 +56,8 @@ resource "kubectl_manifest" "hipster_loadgenerator" {
   depends_on = [
     kubectl_manifest.hipster_workloads
   ]
+
+  wait = true
 }
 
 
-## Ingress part
-data "kubectl_path_documents" "hipster_ingress" {
-  pattern = "templates/hipster-ingress-template.yaml"
-  vars = {
-    fqdn = local.fqdn
-  }
-}
-
-resource "kubectl_manifest" "hipster_ingress" {
-  count     = length(data.kubectl_path_documents.hipster_ingress.documents)
-  yaml_body = element(data.kubectl_path_documents.hipster_ingress.documents, count.index)
-
-  depends_on = [
-    kubectl_manifest.hipster_workloads
-  ]
-}

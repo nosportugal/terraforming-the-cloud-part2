@@ -40,14 +40,3 @@ resource "google_dns_record_set" "parent_ns" {
   ttl     = 300
   rrdatas = google_dns_managed_zone.this.name_servers
 }
-
-## 3.3 Criar um registo de DNS para o ip público
-resource "google_dns_record_set" "hipster" {
-  project      = data.google_project.this.name
-  managed_zone = google_dns_managed_zone.this.name
-
-  name    = "hipster.${google_dns_managed_zone.this.dns_name}"
-  type    = "A"
-  ttl     = 300
-  rrdatas = ["34.120.175.6"]
-}

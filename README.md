@@ -177,22 +177,20 @@ kubectl get nodes
 
 ### 2.4. Vamos por workloads a correr?
 
-* Nesta parte iremos usar o kubectl para instanciar uma aplicação de demo
-* O objectivo será fazer um port-forward para testar app
+* Nesta parte iremos usar o [kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs) provider para instanciar todos os workloads de kubernetes
+
+1. Habilitar o modulo [./k8s.tf](./k8s.tf) descomentando as linhas comentadas
 
 ```bash
-# testar que chegamos ao cluster
-kubectl get nodes
-kubectl version
+# init
+terraform init
 
-# vamos aplicar o hipster-demo
-kubectl apply -f ./k8s/hipster-demo
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
 
-# vamos aguardar que a aplicação inicie (apenas termina quando o pod load-generator tiver corrido com sucesso)
-kubectl get pods -n hipster-demo -w
-
-# obter os serviços e obter o porto do frontend
-kubectl get services -n hipster-demo | grep frontend
+# ver os pods existentes
+kubectl get pods -n hipster-demo
 
 # fazer o port-forward
 kubectl port-forward -n hipster-demo service/frontend 8080:80
@@ -228,56 +226,25 @@ terraform apply plan.tfplan
 
 ### 3.2 Criar um ponto de entrada (ingress) para o site
 
-* No ficheiro [./gke.tf](./gke.tf) iremos descomentar a secção 3.2 que irá permitir que o site seja acessível via internet como se estivesse em produção.
+* No ficheiro [./modules/k8s/ingress.tf](./modules/k8s/ingress.tf) iremos descomentar a secção 3.2 que fazer com que seja aprovisionado um ingress para o nosso site.
 
 ```bash
 # descomentar os seguintes
-data "template_file" "hipster_ingress"
-resource "local_file" "hipster_ingress"
+data "kubectl_path_documents" "hipster_ingress"
+resource "kubectl_manifest" "hipster_ingress"
 
 # plan & apply
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 
-# criar o ingress
-kubectl apply -f ./k8s/hipster-demo/.
-```
-
-### 3.3 Criar um registo de DNS para o aceder ao site
-
-* Antes de testar o site, temos que criar a entrada no dns para apontar para o ip publico
-
-```bash
-# obter o fqdn e o ip publico
+# verificar a existencia de um ingress
 kubectl get ingress -n hipster-demo
-
-# no modulo de DNS, no main.tf, descomentar a resource relativa ao A Record
-resource "google_dns_record_set" "hipster"
-
-# de seguida, substituir a seguinte secção pelo IP que obtiveram no comando acima
-rrdatas = ["INSERIR_AQUI_O_VOSSO_IP_PUBLICO"]
-
-# plan & apply
-terraform plan -out plan.tfplan
-terraform apply plan.tfplan
 ```
-
-após um bocado, será possivel navegar pelo endereço final que podem obter através do seguinte comando:
-```bash
-echo "http://hipster.$(terraform output -raw fqdn)"
-```
-
-## 4. HTTPS e geração de certificados
-
-Fica para outro dia... 😥
-
 ## 5. wrap-up & destroy
 
 Destruir os conteúdos!
 
 ```bash
-# primeiro temos que eliminar os conteudos criados pelo kubectl
-kubectl delete -f ./k8s/hipster-demo/.
 
 # destroy
 terraform destroy
@@ -286,9 +253,15 @@ terraform destroy
 * **Nota:** se o destroy der erro é porque o terraform não consegue apagar um recurso devido a dependências externas. Isto pode acontecer devido aos recursos que foram criados pela ferramenta `kubectl`.
   * Se for este o caso, então será necessário remover os NEGs à mao para o destroy funcionar.
 
+## Comandos úteis
+
 ```bash
 # listar
 gcloud compute network-endpoint-groups list
+
 # apagar
 gcloud compute network-endpoint-groups delete <id>
+
+# delete multiple negs at once
+gcloud compute network-endpoint-groups delete $(gcloud compute network-endpoint-groups list --format="value(name)" --project tf-gke-lab-01-np-000001)
 ```

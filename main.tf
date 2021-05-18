@@ -31,5 +31,5 @@ resource "random_pet" "this" {
 }
 
 locals {
-  prefix = random_pet.this.id
+  prefix = var.user_prefix
 }

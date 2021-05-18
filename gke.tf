@@ -15,17 +15,3 @@ output "gke_kubeconfig_usage" {
 output "gke_kubeconfig_filename" {
   value = module.gke.gke_kubeconfig_filename
 }
-
-## 3.2 Criar e testar um ingress
-# data "template_file" "hipster_ingress" {
-#   template = file("./templates/hipster-ingress-template.yaml")
-
-#   vars = {
-#     fqdn = trimsuffix(module.dns.fqdn,".")
-#   }
-# }
-
-# resource "local_file" "hipster_ingress" {
-#   content  = data.template_file.hipster_ingress.rendered
-#   filename = "./k8s/hipster-demo/300-frontend-ingress.yaml"
-# }
