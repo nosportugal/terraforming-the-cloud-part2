@@ -1,3 +1,4 @@
+## 3.2 habilitar o cert-manager
 # data "kubectl_file_documents" "cert_manager" {
 #   content = file("k8s/cert-manager/00-manifest.yaml")
 # }
@@ -10,6 +11,8 @@
 # resource "time_sleep" "cert_manager_webhook_ready" {
 #   create_duration = "60s"
 
+#   destroy_duration = "120s"
+
 #   triggers = {
 #     # This sets up a proper dependency on the RAM association
 #     cert_manager_live_uid = kubectl_manifest.cert_manager[0].live_uid
@@ -21,7 +24,7 @@
 #   pattern = "k8s/cert-manager/20-letsencrypt-*.yaml"
 #   vars = {
 #     google_project      = data.google_project.this.project_id
-#     project_owner_email = var.project_owner_email
+#     project_owner_email = "${local.fqdn}@nosinternal.pt"
 #   }
 # }
 
@@ -44,7 +47,7 @@
 #   name: cert-manager
 #   namespace: "cert-manager"
 #   annotations:
-#     iam.gke.io/gcp-service-account: ${google_service_account.gke_dns.email}
+#     iam.gke.io/gcp-service-account: ${data.google_service_account.gke_dns.email}
 #   labels:
 #     app: cert-manager
 #     app.kubernetes.io/component: "controller"
@@ -52,6 +55,7 @@
 #     app.kubernetes.io/name: cert-manager
 # YAML
 #   depends_on = [
+#     data.kubectl_path_documents.cert_manager_letsencrypt,
 #     time_sleep.cert_manager_webhook_ready
 #   ]
 # }

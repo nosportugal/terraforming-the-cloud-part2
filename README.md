@@ -55,6 +55,15 @@ sudo scripts/install-terraform.sh
 sudo scripts/install-kubectl.sh
 ```
 
+**preparar um prefixo pessoal (pode ser um nome simples sem espaços nem caracteres estranhos**
+
+* No ficheiro [./terraform.tfvars](./terraform.tfvars) é necessário definir um prefixo
+
+```bash
+# obrigatório preencher
+user_prefix = 
+```
+
 **inicializar o terraform**
 ```bash
 # init & plan & apply
@@ -72,8 +81,6 @@ terraform apply plan.tfplan
 ```bash
 # vpc
 resource "google_compute_network" "default"
-# subnet
-resource "google_compute_subnetwork" "default"
 ```
 
 **Plan & Apply**
@@ -84,7 +91,7 @@ terraform apply plan.tfplan
 
 *Validar the a VPC foi criada com a respetiva subnet...*
 ```bash
-gcloud compute networks list
+gcloud compute networks list | grep $(terraform output -raw my_identifier)
 ```
 
 ## 2. Modules & GKE
@@ -103,6 +110,8 @@ Neste capitulo iremos usar terraform modules para instanciar o GKE.
 ```bash
 # descomentar a seguinte resource
 resource "google_compute_subnetwork" "gke"
+resource "google_compute_router" "default" 
+resource "google_compute_router_nat" "nat"
 
 # plan & apply
 terraform plan -out plan.tfplan
@@ -128,6 +137,9 @@ terraform apply plan.tfplan
 # podem consultar os clusters ativos assim
 gcloud container clusters list --project tf-gke-lab-01-np-000001 | grep $(terraform output -raw my_identifier)
 ```
+
+> Enquanto esperamos, vamos falar um pouco sobre os [Terraform Modules](https://www.terraform.io/docs/language/modules/syntax.html)
+
 
 * Após o cluster estar UP, basta dirigirem-se a esta pagina: <https://console.cloud.google.com/kubernetes/list?project=tf-gke-lab-01-np-000001>
 * Seleccionam o vosso cluster e voila!
@@ -226,9 +238,49 @@ terraform init
 # plan & apply
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
+
+# verificar as zonas criadas
+gcloud dns managed-zones list | grep $(terraform output -raw my_identifier)
 ```
 
-### 3.2 Criar um ponto de entrada (ingress) para o site
+### 3.2 Habilitar o `external-dns` e `cert-manager`
+
+* No ficheiro [./k8s.tf](./k8s.tf) é necessário passar o fqdn devolvido pelo modulo de dns.
+
+```bash
+# descomentar a seguinte linha no ficheiro ./k8s.tf
+fqdn = module.dns.fqdn
+```
+
+* No ficheiro [./modules/k8s/external-dns.tf](./modules/k8s/external-dns.tf) encontra-se a implementação do `external-dns` que permite atualizar os registos DNS automaticamente.
+
+```bash
+# descomentar os seguintes
+data "google_service_account" "gke_dns
+data "kubectl_path_documents" "external_dns"
+resource "kubectl_manifest" "external_dns"
+```
+
+* No ficheiro [./modules/k8s/cert-manager.tf](./modules/k8s/cert-manager.tf) encontra-se a implementação do `cert-manager` que permite gerar certificados SSL automaticamente.
+
+```bash
+# descomentar os seguintes
+data "google_service_account" "gke_dns
+data "kubectl_path_documents" "external_dns"
+resource "kubectl_manifest" "external_dns"
+```
+
+**Por fim, podemos fazer `init` + `plan` e `apply`**
+```bash
+# init
+terraform init
+
+# plan & apply
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+```
+
+### 3.3 Criar um ponto de entrada (ingress) para o site
 
 * No ficheiro [./modules/k8s/ingress.tf](./modules/k8s/ingress.tf) iremos descomentar a secção 3.2 que fazer com que seja aprovisionado um ingress para o nosso site.
 
@@ -241,8 +293,13 @@ resource "kubectl_manifest" "hipster_ingress"
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 
-# verificar a existencia de um ingress
+# verificar a existencia de um ingress e esperar por um public IP
 kubectl get ingress -n hipster-demo
+
+# monitorizar o external-dns e o cert-manager
+kubectl logs -f -n cert-manager -l app=cert-manager
+kubectl logs -f -n external-dns -l app=external-dns
+kubectl describe ingress -n hipster-demo hipster-ingress
 ```
 ## 5. wrap-up & destroy
 

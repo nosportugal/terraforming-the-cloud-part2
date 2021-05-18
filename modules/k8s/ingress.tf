@@ -1,4 +1,4 @@
-## 3.2 - Deploy de ingress
+## 3.3 - Deploy de ingress
 # data "kubectl_path_documents" "hipster_ingress" {
 #   pattern = "templates/hipster-ingress-template.yaml"
 #   vars = {

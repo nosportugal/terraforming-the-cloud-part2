@@ -1,4 +1,4 @@
-## 2.2. GKE module
+# ## 2.2. GKE module
 # module "gke" {
 #   source     = "./modules/gke"
 #   project_id = data.google_project.this.id

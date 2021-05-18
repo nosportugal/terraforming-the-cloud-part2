@@ -7,6 +7,11 @@ terraform {
   }
 }
 
+data "google_project" "this" {
+  project_id = var.project_id
+}
+
+
 locals {
   gke_kubeconfig_filename = var.gke_kubeconfig_filename
   fqdn = trim(var.fqdn, ".")

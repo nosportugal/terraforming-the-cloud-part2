@@ -1,7 +1,7 @@
 ## VPC registry:  https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network
 ## VPC can be viewed here: https://console.cloud.google.com/networking/networks/list?folder=&organizationId=&project=tf-gke-lab-01-np-000001
 
-### 1. Criação da VPC e SUBNET default
+### 1. Criação da VPC
 # resource "google_compute_network" "default" {
 #   project                         = data.google_project.this.name
 #   name                            = "${local.prefix}-vpc-default"

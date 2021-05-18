@@ -16,5 +16,5 @@ variable "sa_gke_dns" {
 
 variable "user_prefix" {
   type = string
-  
+  description = "Este campo é obrigatório para definir a vossa unicidade."
 }

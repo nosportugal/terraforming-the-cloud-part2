@@ -4,9 +4,9 @@ metadata:
   name: hipster-ingress
   namespace: hipster-demo
   annotations:
-    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.allow-http: "false"
     #ingress.gcp.kubernetes.io/pre-shared-cert: hipsterexternal-tls
-    #cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: letsencrypt
 spec:
   rules:
     - host: hipster.${fqdn}
@@ -15,7 +15,7 @@ spec:
         - backend:
             serviceName: frontend
             servicePort: 80
-  # tls:
-  #  - hosts:
-  #    - hipster.${fqdn}
-  #    secretName: hipster-tls-secret
+  tls:
+   - hosts:
+     - hipster.${fqdn}
+     secretName: hipster-tls-secret
