@@ -8,10 +8,6 @@ locals {
       username = "administrator"
       password = random_password.gke.result
     }
-
-    workload_identity_config = {
-      identity_namespace = "${data.google_project.this.project_id}.svc.id.goog"
-    }
   }
 }
 
@@ -28,13 +24,8 @@ resource "google_container_cluster" "default" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   #remove_default_node_pool = true
-  initial_node_count       = 2
-
-  node_config {
-    # https://cloud.google.com/compute/docs/machine-types
-    machine_type = "e2-standard-2"
-    image_type   = "cos_containerd"
-  }
+  initial_node_count       = 1
+  remove_default_node_pool = true
 
   release_channel {
     channel = "STABLE"
@@ -60,10 +51,6 @@ resource "google_container_cluster" "default" {
     }
   }
 
-  network_policy {
-    enabled = false
-  }
-
   private_cluster_config {
     enable_private_endpoint = false         # O cluster é publico
     enable_private_nodes    = true          # Os nodes do cluster são privados
@@ -73,18 +60,52 @@ resource "google_container_cluster" "default" {
   vertical_pod_autoscaling {
     enabled = true
   }
+}
 
-  workload_identity_config {
-    identity_namespace = local.gke.workload_identity_config.identity_namespace
+resource "google_container_node_pool" "default" {
+  name               = "default-pool"
+  location           = local.gke.region
+  cluster            = google_container_cluster.default.name
+  project            = data.google_project.this.name
+  initial_node_count = 1
+  max_pods_per_node  = 40
+
+  node_config {
+    disk_size_gb    = 30
+    disk_type       = "pd-standard"
+    image_type      = "COS_CONTAINERD"
+    local_ssd_count = 0
+    machine_type    = "e2-standard-2" # gcloud compute machine-types list --zones=europe-west1-b --sort-by CPUS
+    preemptible     = true
+
+    metadata = {
+      "disable-legacy-endpoints" = "true"
+    }
+
+    shielded_instance_config {
+      enable_integrity_monitoring = false
+      enable_secure_boot          = true
+    }
+  }
+
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 3
+  }
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+
+  upgrade_settings {
+    max_surge       = 3
+    max_unavailable = 0
   }
 
   lifecycle {
-    ## Se repararem nisto e eu não explicar, por favor avisem 😅
     ignore_changes = [
-      node_pool,
-      node_config
+      initial_node_count
     ]
   }
 }
-
-
