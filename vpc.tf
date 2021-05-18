@@ -19,7 +19,7 @@
 # }
 
 
-# ## 2.1. Subnet para o GKE
+# ## 2.1. Subnet e NAT para o GKE
 # resource "google_compute_subnetwork" "gke" {
 #   name                     = "${local.prefix}-subnet-gke"
 #   network                  = google_compute_network.default.self_link
@@ -27,4 +27,20 @@
 #   region                   = var.region
 #   project                  = google_compute_network.default.project
 #   private_ip_google_access = true
+# }
+
+# resource "google_compute_router" "default" {
+#   project = data.google_project.this.name
+#   name    = "${local.prefix}-router"
+#   region  = google_compute_subnetwork.gke.region
+#   network = google_compute_network.default.id
+# }
+
+# resource "google_compute_router_nat" "nat" {
+#   project = data.google_project.this.name
+#   name                               = "${local.prefix}-nat"
+#   router                             = google_compute_router.default.name
+#   region                             = google_compute_router.default.region
+#   nat_ip_allocate_option             = "AUTO_ONLY"
+#   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 # }
