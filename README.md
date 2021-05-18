@@ -10,14 +10,36 @@ Temas abordados neste modulo:
 
 ## 0. preparar o ambiente
 
+### 0.1 cloud shell
+
 **autenticar a consola com o GCP**
 - Abrir o endereço <https://console.cloud.google.com> e autenticar
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
+``` 
 
-## NOTA: para utilizadores do vscode devem executar "gcloud auth login" primeiro
+**facilitar a leitura dos ficheiros terraform em ambiente cloudshell**
+Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`. 
+
+Apesar de não ser ideal, é melhor do que não ter nada e ajuda bastante!
+
+- Com o editor aberto, carregar em `CTRL+,` para abrir as definições
+- Procurar por `File Associations` e de seguida `Open settings.json`
+- Garantir o seguinte bloco de `files.associations`:
+```json
+"files.associations": {
+    "**/*.tf": "ini"
+}
 ```
+### 0.2 VSCode
+
+```bash
+gcloud init
+gcloud auth application-default login 
+``` 
+
+### 0.3 preparar o projeto
 
 **clonar o projecto git que vamos usar**
 ```bash
@@ -39,24 +61,6 @@ sudo scripts/install-kubectl.sh
 terraform init
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
-
-# obter o prefixo unico & guardar numa variavel (vamos precisar disto mais à frente)
-my_identifier=$(terraform output -raw my_identifier)
-echo $my_identifier
-```
-
-**facilitar a leitura dos ficheiros terraform em ambiente cloudshell**
-Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`. 
-
-Apesar de não ser ideal, é melhor do que não ter nada e ajuda bastante!
-
-- Com o editor aberto, carregar em `CTRL+,` para abrir as definições
-- Procurar por `File Associations` e de seguida `Open settings.json`
-- Garantir o seguinte bloco de `files.associations`:
-```json
-"files.associations": {
-    "**/*.tf": "ini"
-}
 ```
 
 ## 1. criar a VPC

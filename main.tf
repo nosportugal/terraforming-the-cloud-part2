@@ -25,11 +25,6 @@ data "google_project" "this" {
 }
 
 ## local resources
-resource "random_pet" "this" {
-  length = 2
-  separator = "-"
-}
-
 locals {
   prefix = var.user_prefix
 }
