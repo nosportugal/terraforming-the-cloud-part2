@@ -7,7 +7,7 @@
 #  vpc_subnet = google_compute_subnetwork.gke.self_link
 #}
 
-## 2.3. Descomentar este output apenas no passo 2.3
+# 2.3. Descomentar este output apenas no passo 2.3
 # output "gke_kubeconfig_usage" {
 #   value = "export KUBECONFIG=$(pwd)/${module.gke.gke_kubeconfig_filename}"
 # }
