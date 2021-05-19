@@ -27,6 +27,23 @@ resource "google_container_cluster" "default" {
   remove_default_node_pool = false
   node_version = data.google_container_engine_versions.default.latest_node_version
   min_master_version = data.google_container_engine_versions.default.latest_node_version
+
+  node_config {
+    disk_size_gb    = 30
+    disk_type       = "pd-standard"
+    image_type      = "COS_CONTAINERD"
+    local_ssd_count = 0
+    machine_type    = "e2-standard-2" # gcloud compute machine-types list --zones=europe-west1-b --sort-by CPUS
+    preemptible     = true
+    metadata = {
+      "disable-legacy-endpoints" = "true"
+    }
+    shielded_instance_config {
+      enable_integrity_monitoring = false
+      enable_secure_boot          = true
+    }
+  }
+
   release_channel {
     channel = "UNSPECIFIED"
   }
