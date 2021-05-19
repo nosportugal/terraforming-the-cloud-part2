@@ -61,7 +61,6 @@ resource "google_container_cluster" "default" {
 
 data "google_container_engine_versions" "default" {
   project  = data.google_project.this.name
-  provider       = google-beta
   location       = local.gke.region
   version_prefix = "1.18."
 }
