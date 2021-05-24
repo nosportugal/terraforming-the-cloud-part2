@@ -11,6 +11,7 @@
 *.tfplan
 plan
 *.tfstate*
+*.tfvars
 
 # Crash log files
 crash.log

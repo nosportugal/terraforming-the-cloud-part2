@@ -12,7 +12,7 @@ data "google_project" "this" {
 
 data "google_container_cluster" "this" {
   name     = var.gke_name
-  location = var.region
+  location = var.location
   project  = data.google_project.this.name
 }
 

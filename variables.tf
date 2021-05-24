@@ -7,7 +7,13 @@ variable "project_id" {
 variable "region" {
   description = "region for region-aware resources"
   type = string
-  default = "europe-west4"
+  default = "europe-west1"
+}
+
+variable "gke_location" {
+  description = "location for the gke cluster. Will default to region if not specified."
+  type = string
+  default = null
 }
 
 variable "sa_gke_dns" {

@@ -3,10 +3,9 @@ variable "project_id" {
   type        = string
 }
 
-variable "region" {
-  description = "region for region-aware resources"
+variable "location" {
+  description = "location for region-aware resources"
   type = string
-  default = "europe-west4"
 }
 
 variable "prefix" {

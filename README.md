@@ -317,10 +317,13 @@ terraform destroy
 ## Comandos úteis
 
 ```bash
-# listar
+# listar as zonas disponiveis para uma dada regiao
+gcloud compute zones list | grep europe-west1
+
+# listar network-endpoints
 gcloud compute network-endpoint-groups list
 
-# apagar
+# apagar network-endpoints
 gcloud compute network-endpoint-groups delete <id>
 
 # delete multiple negs at once

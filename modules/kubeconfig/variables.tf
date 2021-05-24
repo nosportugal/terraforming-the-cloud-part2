@@ -6,6 +6,6 @@ variable "gke_name" {
   type = string
 }
 
-variable "region" {
+variable "location" {
   type = string
 }
