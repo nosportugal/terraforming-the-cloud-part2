@@ -243,7 +243,7 @@ terraform apply plan.tfplan
 gcloud dns managed-zones list | grep $(terraform output -raw my_identifier)
 ```
 
-### 3.2 Habilitar o `external-dns` e `cert-manager`
+### 3.2 Habilitar o `external-dns`
 
 * No ficheiro [./k8s.tf](./k8s.tf) é necessário passar o fqdn devolvido pelo modulo de dns.
 
@@ -253,15 +253,6 @@ fqdn = module.dns.fqdn
 ```
 
 * No ficheiro [./modules/k8s/external-dns.tf](./modules/k8s/external-dns.tf) encontra-se a implementação do `external-dns` que permite atualizar os registos DNS automaticamente.
-
-```bash
-# descomentar os seguintes
-data "google_service_account" "gke_dns
-data "kubectl_path_documents" "external_dns"
-resource "kubectl_manifest" "external_dns"
-```
-
-* No ficheiro [./modules/k8s/cert-manager.tf](./modules/k8s/cert-manager.tf) encontra-se a implementação do `cert-manager` que permite gerar certificados SSL automaticamente.
 
 ```bash
 # descomentar os seguintes
