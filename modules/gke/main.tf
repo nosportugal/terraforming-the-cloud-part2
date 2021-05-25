@@ -9,8 +9,3 @@ data "google_project" "this" {
 data "google_compute_subnetwork" "gke" {
   self_link = var.vpc_subnet
 }
-
-resource "random_password" "gke" {
-  length  = 16
-  special = true
-}

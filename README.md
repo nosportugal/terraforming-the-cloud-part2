@@ -126,6 +126,8 @@ terraform apply plan.tfplan
 ```bash
 # descomentar o module
 module "gke"
+output "gke_name"
+output "gke_location"
 
 # inicializar o modulo
 terraform init
@@ -145,47 +147,13 @@ gcloud container clusters list --project tf-gke-lab-01-np-000001 | grep $(terraf
 * Seleccionam o vosso cluster e voila!
 * Mas e se nós gerarmos a configuração automaticamente...?
 
+### 2.3 Aceder ao cluster
 
-### 2.3 Kubeconfig module (module inside a module)
-
-* Nesta secção iremos abordar a utilização de modulos dentro de modules
-* Não existe limitações na profundidade das dependências, porém, é preciso ter senso comum para evitar exageros pois o perfeccionismo é um inimigo da funcionalidade.
-* A desvantagem é que apenas é possível passar raw-values, sendo sempre necessário obter o data-object caso queiramos aceder a uma resource
-
-**Objectivo: obter a configuração `kubeconfig.yaml` de acesso ao cluster automaticamente**
-
-* No ficheiro [./modules/gke/kubeconfig.tf](./modules/gke/kubeconfig.tf) encontra-se a definição do module
-* **Não esquecer**: cada module novo é preciso fazer `terraform init`
+Verificar que o cluster está a correr com sucesso:
 
 ```bash
-# descomentar o modulo kubeconfig e o respetivo output
-module "kubeconfig"
-output "gke_kubeconfig"
-
-# init
-terraform init
-
-# plan & apply
-terraform plan -out plan.tfplan
-terraform apply plan.tfplan
-```
-
-**O que está a faltar? Continuamos sem instruções de utilização do `kubeconfig`...😡**
-
-* *O main module também tem que emitir o valor...*
-
-**No ficheiro [./gke.tf](./gke.tf) é necessário adicionar o novo `output` proveniente do module**
-
-```bash
-# descomentar o output
-output "gke_kubeconfig"
-
-# plan & apply
-terraform plan -out plan.tfplan
-terraform apply plan.tfplan
-
-# deverá existir um output identico a
-export KUBECONFIG=kubeconfig.yaml
+# usar o gcloud para obter as credenciais
+export KUBECONFIG=$(pwd)/kubeconfig.yaml && gcloud container clusters get-credentials $(terraform output -raw gke_name) --zone $(terraform output -raw gke_location) --project tf-gke-lab-01-np-000001
 
 # se tiverem o `kubectl` instalado, basta fazerem isto para testarem o acesso ao cluster
 kubectl get nodes
@@ -287,12 +255,12 @@ terraform apply plan.tfplan
 # verificar a existencia de um ingress e esperar por um public IP
 kubectl get ingress -n hipster-demo
 
-# monitorizar o external-dns e o cert-manager
-kubectl logs -f -n cert-manager -l app=cert-manager
+# monitorizar o external-dns, ingress e a geração do certificado
 kubectl logs -f -n external-dns -l app=external-dns
 kubectl describe ingress -n hipster-demo hipster-ingress
+kubectl describe managedcertificates -n hipster-demo hipster
 ```
-## 5. wrap-up & destroy
+## 4. wrap-up & destroy
 
 Destruir os conteúdos!
 

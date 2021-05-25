@@ -2,19 +2,8 @@ locals {
   gke = {
     cluster_name    = "${var.prefix}-gke"
     location        = var.location
-    release_channel = "UNSPECIFIED"
-
-    master_auth = {
-      username = "administrator"
-      password = random_password.gke.result
-    }
+    release_channel = "RAPID"
   }
-}
-
-data "google_container_engine_versions" "v18" {
-  project        = data.google_project.this.name
-  location       = local.gke.location
-  version_prefix = "1.18."
 }
 
 resource "google_container_cluster" "default" {
@@ -24,7 +13,6 @@ resource "google_container_cluster" "default" {
 
   network            = data.google_compute_subnetwork.gke.network
   subnetwork         = data.google_compute_subnetwork.gke.self_link
-  min_master_version = data.google_container_engine_versions.v18.latest_node_version
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -45,17 +33,6 @@ resource "google_container_cluster" "default" {
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = "/16"
     services_ipv4_cidr_block = "/24"
-  }
-
-  # If this block is provided and both username and password are empty, basic authentication will be disabled. 
-  # If this block is not provided, GKE will generate a password for you with the username admin.
-  master_auth {
-    username = local.gke.master_auth.username
-    password = local.gke.master_auth.password
-
-    client_certificate_config {
-      issue_client_certificate = false
-    }
   }
 
   private_cluster_config {
@@ -79,7 +56,6 @@ resource "google_container_node_pool" "default" {
   cluster            = google_container_cluster.default.name
   project            = data.google_project.this.name
   initial_node_count = 1
-  version            = data.google_container_engine_versions.v18.latest_node_version
 
   node_config {
     disk_size_gb    = 30

@@ -13,27 +13,19 @@ data "google_project" "this" {
 
 
 locals {
-  gke_kubeconfig_filename = var.gke_kubeconfig_filename
   fqdn = trim(var.fqdn, ".")
   gke_default_endpoint = var.gke_default_endpoint
   gke_ca_certificate = var.gke_ca_certificate
 }
 
-# usar o kubectl provider através de um kubeconfig
-provider "kubectl" {
-  config_path    = local.gke_kubeconfig_filename
-  load_config_file = true
-}
-
-
 ## usar o kubectl provider através do certificado - NÃO DESCOMENTAR: exemplo apenas
-# data "google_client_config" "this" {}
-# provider "kubectl" {
-#   host                   = local.gke_default_endpoint
-#   cluster_ca_certificate = base64decode(local.gke_ca_certificate)
-#   token                  = data.google_client_config.this.access_token
-#   load_config_file = false
-# }
+data "google_client_config" "this" {}
+provider "kubectl" {
+  host                   = local.gke_default_endpoint
+  cluster_ca_certificate = base64decode(local.gke_ca_certificate)
+  token                  = data.google_client_config.this.access_token
+  load_config_file = false
+}
 
 
 ## hipster demo

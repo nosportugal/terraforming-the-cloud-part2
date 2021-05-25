@@ -5,6 +5,8 @@
 #   project_id = data.google_project.this.id
 #   ## 3.2 - Passar o FQDN do DNS para o modulo
 #   #fqdn                    = module.dns.fqdn
-#   gke_kubeconfig_filename = module.gke.gke_kubeconfig_filename
 #   sa_gke_dns              = var.sa_gke_dns
+#   gke_ca_certificate      = module.gke.gke_ca_certificate
+#   gke_default_endpoint    = module.gke.gke_default_endpoint
+#   gke_default_node_pool   = module.gke.gke_default_node_pool
 # }
