@@ -32,6 +32,7 @@ provider "kubectl" {
 resource "kubectl_manifest" "hipster_ns" {
   yaml_body = file("k8s/hipster-demo/00-namespace.yaml")
   wait = true
+  depends_on = [ var.gke_default_node_pool ]
 }
 
 data "kubectl_path_documents" "hipster_workloads" {
