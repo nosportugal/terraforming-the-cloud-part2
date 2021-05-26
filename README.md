@@ -224,7 +224,7 @@ fqdn = module.dns.fqdn
 
 ```bash
 # descomentar os seguintes
-data "google_service_account" "gke_dns
+data "google_service_account" "gke_dns"
 data "kubectl_path_documents" "external_dns"
 resource "kubectl_manifest" "external_dns"
 ```
