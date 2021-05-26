@@ -20,4 +20,5 @@
 #   yaml_body = element(data.kubectl_path_documents.external_dns.documents, count.index)
 
 #   wait = true
+#   depends_on = [ var.gke_default_node_pool ]
 # }
