@@ -28,3 +28,11 @@ data "google_project" "this" {
 locals {
   prefix = var.user_prefix
 }
+
+data "google_client_config" "this" {}
+provider "kubectl" {
+  host                   = module.gke.gke_default_endpoint
+  cluster_ca_certificate = base64decode(module.gke.gke_ca_certificate)
+  token                  = data.google_client_config.this.access_token
+  load_config_file       = false
+}
