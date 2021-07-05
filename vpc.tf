@@ -10,7 +10,7 @@
 # }
 
 
-# 2.1. Subnet e NAT para o GKE
+## 2.1. Subnet e NAT para o GKE
 # resource "google_compute_subnetwork" "gke" {
 #   name                     = "${local.prefix}-subnet-gke"
 #   network                  = google_compute_network.default.self_link
