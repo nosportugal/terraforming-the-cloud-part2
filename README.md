@@ -296,5 +296,8 @@ gcloud compute network-endpoint-groups delete <id>
 
 # delete multiple negs at once
 gcloud compute network-endpoint-groups delete $(gcloud compute network-endpoint-groups list --format="value(name)" --project tf-gke-lab-01-np-000001)
+
+# verificar as versoes dos release channels
+gcloud container get-server-config --format "yaml(channels)" --zone europe-west1-b
 ```
 <!-- markdownlint-disable-file MD013 -->
