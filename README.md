@@ -7,46 +7,50 @@ Temas abordados neste modulo:
 * Criação de cluster GKE
 * Criação de zonas de DNS
 
-
 ## 0. preparar o ambiente
 
 ### 0.1 cloud shell
 
-**autenticar a consola com o GCP**
-- Abrir o endereço <https://console.cloud.google.com> e autenticar
+autenticar a consola com o GCP
+
+* Abrir o endereço <https://console.cloud.google.com> e autenticar
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
-``` 
+```
 
 **facilitar a leitura dos ficheiros terraform em ambiente cloudshell**
-Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`. 
+Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`.
 
 Apesar de não ser ideal, é melhor do que não ter nada e ajuda bastante!
 
-- Com o editor aberto, carregar em `CTRL+,` para abrir as definições
-- Procurar por `File Associations` e de seguida `Open settings.json`
-- Garantir o seguinte bloco de `files.associations`:
+* Com o editor aberto, carregar em `CTRL+,` para abrir as definições
+* Procurar por `File Associations` e de seguida `Open settings.json`
+* Garantir o seguinte bloco de `files.associations`:
+
 ```json
 "files.associations": {
     "**/*.tf": "ini"
 }
 ```
+
 ### 0.2 VSCode
 
 ```bash
 gcloud init
-gcloud auth application-default login 
-``` 
+gcloud auth application-default login
+```
 
 ### 0.3 preparar o projeto
 
-**clonar o projecto git que vamos usar**
+clonar o projecto git que vamos usar
+
 ```bash
 git clone https://github.com/nosportugal/terraforming-the-cloud-part2 && cd terraforming-the-cloud-part2
 ```
 
-**obter e instalar a versão do terraform e kubectl que vamos usar**
+obter e instalar a versão do terraform e kubectl que vamos usar
+
 ```bash
 # terraform
 sudo scripts/install-terraform.sh
@@ -55,16 +59,17 @@ sudo scripts/install-terraform.sh
 sudo scripts/install-kubectl.sh
 ```
 
-**preparar um prefixo pessoal (pode ser um nome simples sem espaços nem caracteres estranhos**
+preparar um prefixo pessoal (pode ser um nome simples sem espaços nem caracteres estranhos
 
 * No ficheiro [./terraform.tfvars](./terraform.tfvars) é necessário definir um prefixo
 
 ```bash
-# obrigatório preencher
-user_prefix = 
+# obrigatório preencher (tem que ser entre aspas)
+user_prefix = "<valor>"
 ```
 
-**inicializar o terraform**
+inicializar o terraform
+
 ```bash
 # init & plan & apply
 terraform init
@@ -76,20 +81,22 @@ terraform apply plan.tfplan
 
 * No ficheiro [./vpc.tf](./vpc.tf) encontram-se as definições da VPC a usar
 
-**Descomentar as seguintes resources**
+Descomentar as seguintes resources
 
 ```bash
 # vpc
 resource "google_compute_network" "default"
 ```
 
-**Plan & Apply**
+Plan & Apply
+
 ```bash
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
 *Validar the a VPC foi criada com a respetiva subnet...*
+
 ```bash
 gcloud compute networks list | grep $(terraform output -raw my_identifier)
 ```
@@ -100,17 +107,17 @@ Neste capitulo iremos usar terraform modules para instanciar o GKE.
 
 *[Como funcionam os modules?](https://www.terraform.io/docs/language/modules/syntax.html)*
 
-
 ### 2.1 GKE subnet
 
 **Vamos precisar de uma subnet!**
+
 * No ficheiro [./vpc.tf](./vpc.tf) encontram-se as definições da VPC a usar para o K8s
 * Também poderiamos configurar a subnet no modulo, mas dificulta a gestão transversal da VPC
 
 ```bash
 # descomentar a seguinte resource
 resource "google_compute_subnetwork" "gke"
-resource "google_compute_router" "default" 
+resource "google_compute_router" "default"
 resource "google_compute_router_nat" "nat"
 
 # plan & apply
@@ -142,7 +149,6 @@ gcloud container clusters list --project tf-gke-lab-01-np-000001 | grep $(terraf
 
 > Enquanto esperamos, vamos falar um pouco sobre os [Terraform Modules](https://www.terraform.io/docs/language/modules/syntax.html)
 
-
 * Após o cluster estar UP, basta dirigirem-se a esta pagina: <https://console.cloud.google.com/kubernetes/list?project=tf-gke-lab-01-np-000001>
 * Seleccionam o vosso cluster e voila!
 * Mas e se nós gerarmos a configuração automaticamente...?
@@ -159,7 +165,7 @@ export KUBECONFIG=$(pwd)/kubeconfig.yaml && gcloud container clusters get-creden
 kubectl get nodes
 ```
 
-### 2.4. Vamos por workloads a correr?
+### 2.4. Vamos por workloads a correr
 
 * Nesta parte iremos usar o [kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs) provider para instanciar todos os workloads de kubernetes
 
@@ -184,6 +190,7 @@ kubectl port-forward -n hipster-demo service/frontend 8080:80
 * Se estiverem a usar a Google CloudShell podem clicar em `Preview on Port 8080` no canto superior direito.
 
 Portanto, conseguimos validar que os workloads estao a funcionar.
+
 * O próximo passo será expor a partir dos ingresses e respectivos load-balancers do GKE
 * Para isso precisamos de um DNS para HTTP/HTTPS
 * Caso queiramos usar HTTPS vamos também precisar de um certificado SSL
@@ -230,6 +237,7 @@ resource "kubectl_manifest" "external_dns"
 ```
 
 **Por fim, podemos fazer `init` + `plan` e `apply`**
+
 ```bash
 # init
 terraform init
@@ -241,7 +249,7 @@ terraform apply plan.tfplan
 
 ### 3.3 Criar um ponto de entrada (ingress) para o site
 
-* No ficheiro [./modules/k8s/ingress.tf](./modules/k8s/ingress.tf) iremos descomentar a secção 3.2 que fazer com que seja aprovisionado um ingress para o nosso site.
+* No ficheiro [./modules/k8s/ingress.tf](./modules/k8s/ingress.tf) iremos descomentar a secção 3.3 que fazer com que seja aprovisionado um ingress para o nosso site.
 
 ```bash
 # descomentar os seguintes
@@ -260,18 +268,28 @@ kubectl logs -f -n external-dns -l app=external-dns
 kubectl describe ingress -n hipster-demo hipster-ingress
 kubectl describe managedcertificates -n hipster-demo hipster
 ```
+
 ## 4. wrap-up & destroy
 
 Destruir os conteúdos!
 
 ```bash
-
 # destroy
 terraform destroy
 ```
 
-* **Nota:** se o destroy der erro é porque o terraform não consegue apagar um recurso devido a dependências externas. Isto pode acontecer devido aos recursos que foram criados pela ferramenta `kubectl`.
-  * Se for este o caso, então será necessário remover os NEGs à mao para o destroy funcionar.
+## Trabalhar com o projeto full (sem código comentado)
+
+Se por ventura quiserem experimentar o projeto sem terem que andar a descomentar, podem obter uma versão descomentada do projeto a partir da `workshop-full` branch:
+
+<https://github.com/nosportugal/terraforming-the-cloud-part2/tree/workshop-full>
+
+Para poderem clonar o código na branch, deverão fazer o seguinte:
+
+```bash
+git clone https://github.com/nosportugal/terraforming-the-cloud-part2.git
+git checkout workshop-full
+```
 
 ## Comandos úteis
 
@@ -287,4 +305,8 @@ gcloud compute network-endpoint-groups delete <id>
 
 # delete multiple negs at once
 gcloud compute network-endpoint-groups delete $(gcloud compute network-endpoint-groups list --format="value(name)" --project tf-gke-lab-01-np-000001)
+
+# verificar as versoes dos release channels
+gcloud container get-server-config --format "yaml(channels)" --zone europe-west1-b
 ```
+<!-- markdownlint-disable-file MD013 -->

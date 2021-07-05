@@ -9,11 +9,11 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 3.69.0"
+      version = ">= 3.74.0"
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
-      version = ">= 1.11.1"
+      version = ">= 1.11.2"
     }
   }
 }
@@ -27,4 +27,12 @@ data "google_project" "this" {
 ## local resources
 locals {
   prefix = var.user_prefix
+}
+
+data "google_client_config" "this" {}
+provider "kubectl" {
+  host                   = module.gke.gke_default_endpoint
+  cluster_ca_certificate = base64decode(module.gke.gke_ca_certificate)
+  token                  = data.google_client_config.this.access_token
+  load_config_file       = false
 }
