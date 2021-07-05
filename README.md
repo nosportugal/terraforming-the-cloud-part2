@@ -274,13 +274,22 @@ kubectl describe managedcertificates -n hipster-demo hipster
 Destruir os conteúdos!
 
 ```bash
-
 # destroy
 terraform destroy
 ```
 
-* **Nota:** se o destroy der erro é porque o terraform não consegue apagar um recurso devido a dependências externas. Isto pode acontecer devido aos recursos que foram criados pela ferramenta `kubectl`.
-  * Se for este o caso, então será necessário remover os NEGs à mao para o destroy funcionar.
+## Trabalhar com o projeto full (sem código comentado)
+
+Se por ventura quiserem experimentar o projeto sem terem que andar a descomentar, podem obter uma versão descomentada do projeto a partir da `workshop-full` branch:
+
+<https://github.com/nosportugal/terraforming-the-cloud-part2/tree/workshop-full>
+
+Para poderem clonar o código na branch, deverão fazer o seguinte:
+
+```bash
+git clone https://github.com/nosportugal/terraforming-the-cloud-part2.git
+git checkout workshop-full
+```
 
 ## Comandos úteis
 
