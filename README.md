@@ -7,46 +7,50 @@ Temas abordados neste modulo:
 * Criação de cluster GKE
 * Criação de zonas de DNS
 
-
 ## 0. preparar o ambiente
 
 ### 0.1 cloud shell
 
-**autenticar a consola com o GCP**
-- Abrir o endereço <https://console.cloud.google.com> e autenticar
+autenticar a consola com o GCP
+
+* Abrir o endereço <https://console.cloud.google.com> e autenticar
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
-``` 
+```
 
 **facilitar a leitura dos ficheiros terraform em ambiente cloudshell**
-Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`. 
+Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`.
 
 Apesar de não ser ideal, é melhor do que não ter nada e ajuda bastante!
 
-- Com o editor aberto, carregar em `CTRL+,` para abrir as definições
-- Procurar por `File Associations` e de seguida `Open settings.json`
-- Garantir o seguinte bloco de `files.associations`:
+* Com o editor aberto, carregar em `CTRL+,` para abrir as definições
+* Procurar por `File Associations` e de seguida `Open settings.json`
+* Garantir o seguinte bloco de `files.associations`:
+
 ```json
 "files.associations": {
     "**/*.tf": "ini"
 }
 ```
+
 ### 0.2 VSCode
 
 ```bash
 gcloud init
 gcloud auth application-default login 
-``` 
+```
 
 ### 0.3 preparar o projeto
 
-**clonar o projecto git que vamos usar**
+clonar o projecto git que vamos usar
+
 ```bash
 git clone https://github.com/nosportugal/terraforming-the-cloud-part2 && cd terraforming-the-cloud-part2
 ```
 
-**obter e instalar a versão do terraform e kubectl que vamos usar**
+obter e instalar a versão do terraform e kubectl que vamos usar
+
 ```bash
 # terraform
 sudo scripts/install-terraform.sh
@@ -55,7 +59,7 @@ sudo scripts/install-terraform.sh
 sudo scripts/install-kubectl.sh
 ```
 
-**preparar um prefixo pessoal (pode ser um nome simples sem espaços nem caracteres estranhos**
+preparar um prefixo pessoal (pode ser um nome simples sem espaços nem caracteres estranhos
 
 * No ficheiro [./terraform.tfvars](./terraform.tfvars) é necessário definir um prefixo
 
@@ -64,7 +68,8 @@ sudo scripts/install-kubectl.sh
 user_prefix = 
 ```
 
-**inicializar o terraform**
+inicializar o terraform
+
 ```bash
 # init & plan & apply
 terraform init
@@ -76,20 +81,22 @@ terraform apply plan.tfplan
 
 * No ficheiro [./vpc.tf](./vpc.tf) encontram-se as definições da VPC a usar
 
-**Descomentar as seguintes resources**
+Descomentar as seguintes resources
 
 ```bash
 # vpc
 resource "google_compute_network" "default"
 ```
 
-**Plan & Apply**
+Plan & Apply
+
 ```bash
 terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
 *Validar the a VPC foi criada com a respetiva subnet...*
+
 ```bash
 gcloud compute networks list | grep $(terraform output -raw my_identifier)
 ```
@@ -100,10 +107,10 @@ Neste capitulo iremos usar terraform modules para instanciar o GKE.
 
 *[Como funcionam os modules?](https://www.terraform.io/docs/language/modules/syntax.html)*
 
-
 ### 2.1 GKE subnet
 
 **Vamos precisar de uma subnet!**
+
 * No ficheiro [./vpc.tf](./vpc.tf) encontram-se as definições da VPC a usar para o K8s
 * Também poderiamos configurar a subnet no modulo, mas dificulta a gestão transversal da VPC
 
@@ -141,7 +148,6 @@ gcloud container clusters list --project tf-gke-lab-01-np-000001 | grep $(terraf
 ```
 
 > Enquanto esperamos, vamos falar um pouco sobre os [Terraform Modules](https://www.terraform.io/docs/language/modules/syntax.html)
-
 
 * Após o cluster estar UP, basta dirigirem-se a esta pagina: <https://console.cloud.google.com/kubernetes/list?project=tf-gke-lab-01-np-000001>
 * Seleccionam o vosso cluster e voila!
@@ -184,6 +190,7 @@ kubectl port-forward -n hipster-demo service/frontend 8080:80
 * Se estiverem a usar a Google CloudShell podem clicar em `Preview on Port 8080` no canto superior direito.
 
 Portanto, conseguimos validar que os workloads estao a funcionar.
+
 * O próximo passo será expor a partir dos ingresses e respectivos load-balancers do GKE
 * Para isso precisamos de um DNS para HTTP/HTTPS
 * Caso queiramos usar HTTPS vamos também precisar de um certificado SSL
@@ -230,6 +237,7 @@ resource "kubectl_manifest" "external_dns"
 ```
 
 **Por fim, podemos fazer `init` + `plan` e `apply`**
+
 ```bash
 # init
 terraform init
@@ -260,6 +268,7 @@ kubectl logs -f -n external-dns -l app=external-dns
 kubectl describe ingress -n hipster-demo hipster-ingress
 kubectl describe managedcertificates -n hipster-demo hipster
 ```
+
 ## 4. wrap-up & destroy
 
 Destruir os conteúdos!
@@ -288,3 +297,4 @@ gcloud compute network-endpoint-groups delete <id>
 # delete multiple negs at once
 gcloud compute network-endpoint-groups delete $(gcloud compute network-endpoint-groups list --format="value(name)" --project tf-gke-lab-01-np-000001)
 ```
+<!-- markdownlint-disable-file MD013 -->

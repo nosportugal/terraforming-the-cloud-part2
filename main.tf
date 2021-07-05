@@ -9,11 +9,11 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 3.69.0"
+      version = ">= 3.74.0"
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
-      version = ">= 1.11.1"
+      version = ">= 1.11.2"
     }
   }
 }
