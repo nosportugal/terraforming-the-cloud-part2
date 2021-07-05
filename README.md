@@ -38,7 +38,7 @@ Apesar de não ser ideal, é melhor do que não ter nada e ajuda bastante!
 
 ```bash
 gcloud init
-gcloud auth application-default login 
+gcloud auth application-default login
 ```
 
 ### 0.3 preparar o projeto
@@ -64,8 +64,8 @@ preparar um prefixo pessoal (pode ser um nome simples sem espaços nem caractere
 * No ficheiro [./terraform.tfvars](./terraform.tfvars) é necessário definir um prefixo
 
 ```bash
-# obrigatório preencher
-user_prefix = 
+# obrigatório preencher (tem que ser entre aspas)
+user_prefix = "<valor>"
 ```
 
 inicializar o terraform
@@ -117,7 +117,7 @@ Neste capitulo iremos usar terraform modules para instanciar o GKE.
 ```bash
 # descomentar a seguinte resource
 resource "google_compute_subnetwork" "gke"
-resource "google_compute_router" "default" 
+resource "google_compute_router" "default"
 resource "google_compute_router_nat" "nat"
 
 # plan & apply
@@ -165,7 +165,7 @@ export KUBECONFIG=$(pwd)/kubeconfig.yaml && gcloud container clusters get-creden
 kubectl get nodes
 ```
 
-### 2.4. Vamos por workloads a correr?
+### 2.4. Vamos por workloads a correr
 
 * Nesta parte iremos usar o [kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs) provider para instanciar todos os workloads de kubernetes
 
