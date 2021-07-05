@@ -4,7 +4,6 @@
 #   account_id = var.sa_gke_dns
 # }
 
-# external-dns
 # data "kubectl_path_documents" "external_dns" {
 #   pattern = "k8s/external-dns/00-manifest.yaml"
 #   vars = {
