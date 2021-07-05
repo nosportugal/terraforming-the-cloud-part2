@@ -249,7 +249,7 @@ terraform apply plan.tfplan
 
 ### 3.3 Criar um ponto de entrada (ingress) para o site
 
-* No ficheiro [./modules/k8s/ingress.tf](./modules/k8s/ingress.tf) iremos descomentar a secção 3.2 que fazer com que seja aprovisionado um ingress para o nosso site.
+* No ficheiro [./modules/k8s/ingress.tf](./modules/k8s/ingress.tf) iremos descomentar a secção 3.3 que fazer com que seja aprovisionado um ingress para o nosso site.
 
 ```bash
 # descomentar os seguintes
