@@ -341,19 +341,16 @@ gcloud container get-server-config --format "yaml(channels)" --zone europe-west1
  [//]: # (INSERT IMAGE REFERENCES BELOW)
  [//]: # (*****************************)
 
-[tfc-arch]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/terraforming-the-cloud.png "Terraforming the cloud architecture"
+[tfc-arch]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/terraforming-the-cloud.png "Terraforming the cloud architecture"
 
-[tfc-cloudshell-activate]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-activate.png "Cloudshell activate screenshot"
+[tfc-cloudshell-activate]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-activate.png "Cloudshell activate screenshot"
 
-[tfc-cloushell-open-new]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-open-new.png "Cloudshell open new window screenshot"
+[tfc-cloushell-open-new]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-open-new.png "Cloudshell open new window screenshot"
 
-[tfc-cloushell-open-editor]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-open-editor.png "Cloudshell open editor screenshot"
+[tfc-cloushell-open-editor]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-open-editor.png "Cloudshell open editor screenshot"
 
-[tfc-cloushell-close-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-close-terminal.png "Cloudshell close terminal window screenshot"
+[tfc-cloushell-close-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-close-terminal.png "Cloudshell close terminal window screenshot"
 
-[tfc-cloushell-new-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-new-terminal.png "Cloudshell new terminal window screenshot"
+[tfc-cloushell-new-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-new-terminal.png "Cloudshell new terminal window screenshot"
 
-[tfc-cloushell-open-folder]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-open-folder.png "Cloudshell open folder screenshot"
-
-<!-- template only -->
-[tfc-]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell- "Cloudshell screenshot"
+[tfc-cloushell-open-folder]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-open-folder.png "Cloudshell open folder screenshot"
