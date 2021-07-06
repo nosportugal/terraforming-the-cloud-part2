@@ -1,2 +1,0 @@
-criar o cluster (zonal): cerca de 15min
-mudar size da node-pool: 
