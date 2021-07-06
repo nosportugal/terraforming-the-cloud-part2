@@ -1,5 +1,7 @@
 # terraforming the cloud - part 2
 
+![Terraforming the cloud architecture][tfc-arch]
+
 Temas abordados neste modulo:
 
 * Criação de VPCs
@@ -7,56 +9,80 @@ Temas abordados neste modulo:
 * Criação de cluster GKE
 * Criação de zonas de DNS
 
-## 0. preparar o ambiente
+## setup do ambiente
 
-### 0.1 cloud shell
+Antes de iniciar a workshop propriamente dita, é necessário efetuar uma preparação do ambiente da cloudshell (ou VSCode) para que possam executar os comandos num ambiente já previamente preparado.
 
-autenticar a consola com o GCP
+Abaixo seguem dois guias para configuração em:
 
-* Abrir o endereço <https://console.cloud.google.com> e autenticar
+1. Google Cloud Shell
+2. Visual Studio Code
+
+### configurar a cloud shell
+
+Abrir o endereço <https://console.cloud.google.com> e autenticar.
+
+De seguida, ativar a cloud shell:
+
+![tfc-cloudshell-activate]
+
+...abrir em nova janela:
+
+![tfc-cloushell-open-new]
+
+...abrir editor:
+
+![tfc-cloushell-open-editor]
+
+...fechar a janela do terminal no fundo:
+
+![tfc-cloushell-close-terminal]
+
+...abrir novo terminal (embebido no editor):
+
+![tfc-cloushell-new-terminal]
+
+...abrir o editor na pasta do projeto:
+
+![tfc-cloushell-open-folder]
+
+E agora que têm o editor pronto, podemos autenticar a consola com o GCP:
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
 ```
 
-**facilitar a leitura dos ficheiros terraform em ambiente cloudshell**
-Com o seguinte guia é possivel ajudar um pouco na leitura sintática dos ficheiros terraform usando a formatação `ini`.
+### configurar o vscode
 
-Apesar de não ser ideal, é melhor do que não ter nada e ajuda bastante!
+> apenas válido para vscode em WSL (windows-subsystem-linux) - instalações em powershell não são suportadas
 
-* Com o editor aberto, carregar em `CTRL+,` para abrir as definições
-* Procurar por `File Associations` e de seguida `Open settings.json`
-* Garantir o seguinte bloco de `files.associations`:
+Caso decidam usar o `vscode`, é necessário garantirem que têm os seguintes binários instalados.
+As instruções que seguem vão instalar as tools necessárias:
 
-```json
-"files.associations": {
-    "**/*.tf": "ini"
-}
-```
-
-### 0.2 VSCode
+1. terraform
+2. kubectl
+3. gcloud
 
 ```bash
+# instalar as tools necessárias (podem skipar se já têm instaladas)
+sudo ./scripts/install-terraform.sh        # terraform
+sudo ./scripts/install-kubectl.sh          # kubectl
+curl https://sdk.cloud.google.com | bash   # gcloud
+
+# reinicializar a shell
+exec -l $SHELL
+
+# inicializar o cliente gcloud
 gcloud init
 gcloud auth application-default login
 ```
 
-### 0.3 preparar o projeto
+## 0. terraform init
 
 clonar o projecto git que vamos usar
 
 ```bash
 git clone https://github.com/nosportugal/terraforming-the-cloud-part2 && cd terraforming-the-cloud-part2
-```
-
-obter e instalar a versão do terraform e kubectl que vamos usar
-
-```bash
-# terraform
-sudo scripts/install-terraform.sh
-
-# kubectl
-sudo scripts/install-kubectl.sh
 ```
 
 preparar um prefixo pessoal (pode ser um nome simples sem espaços nem caracteres estranhos
@@ -310,3 +336,24 @@ gcloud compute network-endpoint-groups delete $(gcloud compute network-endpoint-
 gcloud container get-server-config --format "yaml(channels)" --zone europe-west1-b
 ```
 <!-- markdownlint-disable-file MD013 -->
+
+ [//]: # (*****************************)
+ [//]: # (INSERT IMAGE REFERENCES BELOW)
+ [//]: # (*****************************)
+
+[tfc-arch]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/terraforming-the-cloud.png "Terraforming the cloud architecture"
+
+[tfc-cloudshell-activate]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-activate.png "Cloudshell activate screenshot"
+
+[tfc-cloushell-open-new]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-open-new.png "Cloudshell open new window screenshot"
+
+[tfc-cloushell-open-editor]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-open-editor.png "Cloudshell open editor screenshot"
+
+[tfc-cloushell-close-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-close-terminal.png "Cloudshell close terminal window screenshot"
+
+[tfc-cloushell-new-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-new-terminal.png "Cloudshell new terminal window screenshot"
+
+[tfc-cloushell-open-folder]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell-open-folder.png "Cloudshell open folder screenshot"
+
+<!-- template only -->
+[tfc-]: https://github.com/nosportugal/terraforming-the-cloud-part2/images/cloudshell- "Cloudshell screenshot"
