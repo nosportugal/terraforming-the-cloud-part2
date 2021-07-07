@@ -144,7 +144,7 @@ Neste capitulo iremos usar terraform modules para instanciar o GKE.
 # descomentar a seguinte resource
 resource "google_compute_subnetwork" "gke"
 resource "google_compute_router" "default"
-resource "google_compute_router_nat" "nat"
+resource "google_compute_router_nat" "default"
 
 # plan & apply
 terraform plan -out plan.tfplan

@@ -27,7 +27,7 @@
 #   network = google_compute_network.default.id
 # }
 
-# resource "google_compute_router_nat" "nat" {
+# resource "google_compute_router_nat" "default" {
 #   project = data.google_project.this.name
 #   name                               = "${local.prefix}-nat"
 #   router                             = google_compute_router.default.name
