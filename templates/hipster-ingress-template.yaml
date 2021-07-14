@@ -13,8 +13,9 @@ metadata:
   name: hipster-ingress
   namespace: hipster-demo
   annotations:
-    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.allow-http: "true"
     networking.gke.io/managed-certificates: hipster
+    networking.gke.io/v1beta1.FrontendConfig: "frontendconfig"
 spec:
   rules:
     - host: hipster.${fqdn}
