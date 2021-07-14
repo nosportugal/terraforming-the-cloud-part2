@@ -1,6 +1,6 @@
 ## 3.3 - Deploy de ingress
 # data "kubectl_path_documents" "hipster_ingress" {
-#   pattern = "templates/hipster-ingress-template.yaml"
+#   pattern = "k8s/hipster-demo/300-hipster-ingress.yaml"
 #   vars = {
 #     fqdn = local.fqdn
 #   }
