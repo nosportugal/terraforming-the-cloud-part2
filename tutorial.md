@@ -281,6 +281,10 @@ Descomentar os seguintes recursos no ficheiro `./modules/k8s/external-dns.tf`:
 * `data "kubectl_path_documents" "external_dns"`
 * `resource "kubectl_manifest" "external_dns"`
 
+Confirmar que a versão do external-dns é a mais recente. Podes verificar nas [release notes](https://github.com/kubernetes-sigs/external-dns/releases).
+
+Se não for, atualiza a imagem em `./k8s/external-dns/00-manifest.yaml`.
+
 Executar `terraform init` para re-inicializar o modulo:
 
 ```bash
