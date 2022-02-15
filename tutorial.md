@@ -179,6 +179,8 @@ Para habilitar o modulo, temos que ir ao ficheiro `./k8s.tf` e descomentar o seg
 * `module "k8s"`
 * ❗❗ **não** descomentar a linha `fqdn`; será habilitado mais a frente ❗❗
 
+Os microserviços utilizados nesta demo, encontram-se [neste registry](https://console.cloud.google.com/gcr/images/google-samples/global/microservices-demo). Antes de inicializarem o módulo, verifiquem que as versões destes microserviços (passar pelos ficheiros `./k8s/hipster-demo/*.yaml` ) ainda existem.
+
 Executar `terraform init` para inicializar o modulo:
 
 ```bash

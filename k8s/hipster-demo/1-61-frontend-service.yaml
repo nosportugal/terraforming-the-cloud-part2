@@ -3,8 +3,10 @@ kind: Service
 metadata:
   name: frontend
   namespace: hipster-demo
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: hipster.gvcl.lab-01.clg.nos.pt.
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: frontend
   ports:
