@@ -21,7 +21,7 @@ resource "google_compute_subnetwork" "gke" {
 }
 
 resource "google_compute_router" "default" {
- project = data.google_project.this.name
+  project = data.google_project.this.name
   name    = "${local.prefix}-router"
   region  = google_compute_subnetwork.gke.region
   network = google_compute_network.default.id
