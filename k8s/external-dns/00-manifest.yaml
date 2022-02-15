@@ -11,7 +11,7 @@ metadata:
   annotations:
     iam.gke.io/gcp-service-account: ${dns_service_account}
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: external-dns
@@ -19,7 +19,7 @@ rules:
 - apiGroups: [""]
   resources: ["services","endpoints","pods"]
   verbs: ["get","watch","list"]
-- apiGroups: ["extensions"] 
+- apiGroups: ["extensions","networking.k8s.io"] 
   resources: ["ingresses"] 
   verbs: ["get","watch","list"]
 - apiGroups: [""]
@@ -61,12 +61,12 @@ spec:
         runAsUser: 65534
       containers:
       - name: external-dns
-        image: k8s.gcr.io/external-dns/external-dns:v0.7.6
+        image: k8s.gcr.io/external-dns/external-dns:v0.8.0
         args:
         - --source=service
         - --source=ingress
         - --provider=google
-        - --domain-filter=${fqdn} # will make ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
+        - --domain-filter=gvcl.lab-01.clg.nos.pt #${fqdn} # will make ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
         #- --google-project=<default-unless-specified> # IF not specified, externalDNS will use the underlying project where the GKE is running
         - --registry=txt
         #- --txt-owner-id=my-identifier
