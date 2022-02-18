@@ -87,7 +87,7 @@ No ficheiro `./vpc.tf`, descomentar as seguintes resources:
 * `resource "google_compute_router" "default"`
 * `resource "google_compute_router_nat" "default"`
 
-_**Why**: Tanto o `router` como o `nat` são recursos necessários para permitir que o cluster GKE possa aceder à internet para fazer download das imagens dos containers que vamos usar._
+**Why**: Tanto o `router` como o `nat` são recursos necessários para permitir que o cluster GKE possa aceder à internet para fazer download das imagens dos containers que vamos usar._
 
 Executar o `plan` & `apply`:
 
@@ -178,6 +178,8 @@ Para habilitar o modulo, temos que ir ao ficheiro `./k8s.tf` e descomentar o seg
 
 * `module "k8s"`
 * ❗❗ **não** descomentar a linha `fqdn`; será habilitado mais a frente ❗❗
+
+Os microserviços utilizados nesta demo, encontram-se [neste registry](https://console.cloud.google.com/gcr/images/google-samples/global/microservices-demo). Antes de inicializarem o módulo, verifiquem que as versões destes microserviços (passar pelos ficheiros `./k8s/hipster-demo/*.yaml` ) ainda existem.
 
 Executar `terraform init` para inicializar o modulo:
 
@@ -285,7 +287,7 @@ Executar `terraform init` para re-inicializar o modulo:
 terraform init
 ```
 
-_**Why**: A razão que temos que voltar a executar o `terraform init` é porque descomentámos o valor de entrada `fqdn` no modulo `k8s.tf`_
+**Why**: A razão que temos que voltar a executar o `terraform init` é porque descomentámos o valor de entrada `fqdn` no modulo `k8s.tf`_
 
 Executar o `plan` & `apply`:
 

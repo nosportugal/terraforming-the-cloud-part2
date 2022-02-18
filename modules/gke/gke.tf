@@ -46,7 +46,7 @@ resource "google_container_cluster" "default" {
   }
 
   workload_identity_config {
-    identity_namespace = "${data.google_project.this.project_id}.svc.id.goog"
+    workload_pool = "${data.google_project.this.project_id}.svc.id.goog"
   }
 }
 
