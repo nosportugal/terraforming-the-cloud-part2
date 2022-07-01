@@ -4,17 +4,53 @@ data "google_service_account" "gke_dns" {
   account_id = var.sa_gke_dns
 }
 
-data "kubectl_path_documents" "external_dns" {
-  pattern = "k8s/external-dns/00-manifest.yaml"
-  vars = {
-    dns_service_account = data.google_service_account.gke_dns.email
-    fqdn                = local.fqdn
+resource "kubernetes_namespace" "external_dns" {
+  metadata {
+    name = "external-dns"
   }
 }
 
-resource "kubectl_manifest" "external_dns" {
-  count      = length(data.kubectl_path_documents.external_dns.documents)
-  yaml_body  = element(data.kubectl_path_documents.external_dns.documents, count.index)
-  wait       = true
-  depends_on = [var.gke_default_node_pool]
+resource "helm_release" "external_dns" {
+  name             = "external-dns"
+  repository       = "https://kubernetes-sigs.github.io/external-dns"
+  chart            = "external-dns"
+  version          = "1.9.0"
+  namespace        = kubernetes_namespace.external_dns.metadata[0].name
+  wait_for_jobs    = true
+  create_namespace = false
+
+  values = [
+    <<YAML
+  serviceAccount:
+    create: true
+    annotations:
+      iam.gke.io/gcp-service-account: ${data.google_service_account.gke_dns.email}
+    name: external-dns
+
+  sources:
+    - ingress
+    - service
+
+  extraArgs:
+    - --google-zone-visibility=public
+
+  podLabels:
+    app: external-dns
+
+  resources:
+    requests:
+      memory: 50Mi
+      cpu: 10m
+    limits:
+      memory: 200Mi
+
+  domainFilters:
+  - ${local.fqdn}
+
+  txtOwnerId: ${var.project_id}/external-dns
+  policy: sync
+  registry: txt
+  provider: google
+  YAML
+  ]
 }

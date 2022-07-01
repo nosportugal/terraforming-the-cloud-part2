@@ -9,11 +9,19 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 3.74.0"
+      version = ">= 4.27.0"
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
-      version = ">= 1.11.2"
+      version = ">= 1.14.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.6.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.12.0"
     }
   }
 }
@@ -35,4 +43,18 @@ provider "kubectl" {
   cluster_ca_certificate = base64decode(module.gke.gke_ca_certificate)
   token                  = data.google_client_config.this.access_token
   load_config_file       = false
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = module.gke.gke_default_endpoint
+    token                  = data.google_client_config.this.access_token
+    cluster_ca_certificate = base64decode(module.gke.gke_ca_certificate)
+  }
+}
+
+provider "kubernetes" {
+  host                   = "https://${module.gke.gke_default_endpoint}"
+  token                  = data.google_client_config.this.access_token
+  cluster_ca_certificate = base64decode(module.gke.gke_ca_certificate)
 }

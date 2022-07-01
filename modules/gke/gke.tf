@@ -62,7 +62,7 @@ resource "google_container_node_pool" "default" {
     disk_type       = "pd-standard"
     image_type      = "COS_CONTAINERD"
     local_ssd_count = 0
-    machine_type    = "e2-standard-2" # gcloud compute machine-types list --zones=europe-west1-b --sort-by CPUS
+    machine_type    = "t2d-standard-2" # gcloud compute machine-types list --zones=europe-west1-b --sort-by CPUS
     preemptible     = true
 
     metadata = {
