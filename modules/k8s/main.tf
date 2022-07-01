@@ -1,8 +1,7 @@
 terraform {
   required_providers {
     kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.11.2"
+      source = "gavinbunney/kubectl"
     }
   }
 }
@@ -19,8 +18,7 @@ locals {
 ## hipster demo
 resource "kubectl_manifest" "hipster_ns" {
   yaml_body = file("k8s/hipster-demo/00-namespace.yaml")
-  wait = true
-  depends_on = [ var.gke_default_node_pool ]
+  wait      = true
 }
 
 data "kubectl_path_documents" "hipster_workloads" {
@@ -28,9 +26,9 @@ data "kubectl_path_documents" "hipster_workloads" {
 }
 
 resource "kubectl_manifest" "hipster_workloads" {
-  count     = length(data.kubectl_path_documents.hipster_workloads.documents)
+  count     = length(flatten(toset([for f in fileset(".", data.kubectl_path_documents.hipster_workloads.pattern) : split("\n---\n", file(f))])))
   yaml_body = element(data.kubectl_path_documents.hipster_workloads.documents, count.index)
-  
+
   depends_on = [
     kubectl_manifest.hipster_ns
   ]

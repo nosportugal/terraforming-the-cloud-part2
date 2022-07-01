@@ -7,7 +7,7 @@
 # }
 
 # resource "kubectl_manifest" "hipster_ingress" {
-#   count     = length(data.kubectl_path_documents.hipster_ingress.documents)
+#   count     = length(flatten(toset([for f in fileset(".", data.kubectl_path_documents.hipster_ingress.pattern) : split("\n---\n", file(f))])))
 #   yaml_body = element(data.kubectl_path_documents.hipster_ingress.documents, count.index)
 
 #   depends_on = [
