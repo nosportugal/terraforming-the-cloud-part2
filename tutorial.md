@@ -294,8 +294,8 @@ No ficheiro `./modules/k8s/external-dns.tf` encontra-se a implementação do `ex
 Descomentar os seguintes recursos no ficheiro `./modules/k8s/external-dns.tf`:
 
 * `data "google_service_account" "gke_dns"`
-* `data "kubectl_path_documents" "external_dns"`
-* `resource "kubectl_manifest" "external_dns"`
+* `data "kubernetes_namespace" "external_dns"`
+* `resource "helm_release" "external_dns"`
 
 Executar `terraform init` para re-inicializar o modulo:
 
