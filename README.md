@@ -14,6 +14,22 @@ Temas abordados neste modulo:
 
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.png)](https://ssh.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/nosportugal/terraforming-the-cloud-part2&cloudshell_tutorial=tutorial.md)
 
+### erro a abrir o tutorial
+
+Se por acaso tiverem este erro:
+
+![tfc-cloushell-error-reserved-id]
+
+Devem fechar o tutorial:
+
+![tfc-cloushell-error-open-tutorial]
+
+E depois na cloudshell vamos reinicar o tutorial usando o seguinte comando:
+
+```bash
+teachme tutorial.md
+```
+
 ---
 
 ## setup do ambiente (manual)
@@ -155,3 +171,7 @@ gcloud container get-server-config --format "yaml(channels)" --zone europe-west1
 [tfc-cloushell-new-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-new-terminal.png "Cloudshell new terminal window screenshot"
 
 [tfc-cloushell-open-folder]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-open-folder.png "Cloudshell open folder screenshot"
+
+[tfc-cloushell-error-reserved-id]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-open-error-reserved-id.jpg "Cloudshell error reserved-id"
+
+[tfc-cloushell-error-open-tutorial]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/cloudshell-open-error-close-tutorial.jpg "Cloudshell error open tuturial"
