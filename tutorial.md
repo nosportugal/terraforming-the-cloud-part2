@@ -12,7 +12,23 @@
 
 **Tempo estimado**: Cerca de 2 horas
 
-Antes de começares, certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
+**Pré requisitos**: Antes de começares, é necessário verificares algumas coisas:
+
+Junta-te à **Cloud Guild** no Teams e segue os tutorias da Wiki do GCP.
+
+Depois pede para te adicionarem ao projeto no GCP.
+
+De seguida vais ter de configurar o GCP. Se já tens o `gcloud` instalado corre este comando:
+
+**NOTA: Se estás a executar tutorial na cloudshell (consola do GCP), não precisas de correr este comando.**
+
+```bash
+gcloud auth application-default login
+```
+
+Podes econtrar mais info sobre a auth [aqui](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started).
+
+Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
