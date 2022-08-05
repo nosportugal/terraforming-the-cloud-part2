@@ -64,7 +64,7 @@ terraform apply plan.tfplan
 
 * No ficheiro `./vpc.tf` encontram-se as definições da VPC a usar
 
-Descomentar as seguintes resources:
+👉 Descomentar as seguintes resources:
 
 * `resource "google_compute_network" "default"`
 
@@ -97,7 +97,7 @@ Para aprovisionar um GKE é necessário uma subnet. Esta subnet será usada para
 * No ficheiro `./vpc.tf` encontram-se as definições da VPC a usar para o GKE
 * Também poderiamos configurar a subnet no modulo, mas dificulta a gestão transversal da VPC
 
-No ficheiro `./vpc.tf`, descomentar as seguintes resources:
+👉 No ficheiro `./vpc.tf`, descomentar as seguintes resources:
 
 * `resource "google_compute_subnetwork" "gke"`
 * `resource "google_compute_router" "default"`
@@ -134,7 +134,7 @@ Agora que temos a subnet preparada, iremos entao proceder à primeira aplicaçã
 * No ficheiro `./gke.tf` encontra-se a invocação do module
 * Por cada module é preciso fazer `terraform init`
 
-No ficheiro `./gke.tf`, descomentar as seguintes resources:
+👉 No ficheiro `./gke.tf`, descomentar as seguintes resources:
 
 * `module "gke"`
 * `output "gke_name"`
@@ -190,7 +190,7 @@ Trata-se de um provider da comunidade que tal como o nome indica, facilita a uti
 
 > *[from docs:](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs) This provider is the best way of managing Kubernetes resources in Terraform, by allowing you to use the thing Kubernetes loves best - yaml!*
 
-Para habilitar o modulo, temos que ir ao ficheiro `./hipster.tf` e descomentar o seguinte modulo:
+👉 Para habilitar o modulo, temos que ir ao ficheiro `./k8s.hipster.tf` e descomentar o seguinte modulo:
 
 * `module "hipster"`
 * ❗❗ **não** descomentar a linha `fqdn`; será habilitado mais a frente ❗❗
@@ -252,7 +252,7 @@ Conseguimos validar que os workloads estao a funcionar.
 
 No ficheiro `./dns.tf` encontra-se a definição do modulo.
 
-Para habilitar o modulo `./dns.tf` precisamos de descomentar as seguintes resources:
+👉 Para habilitar o modulo `./dns.tf` precisamos de descomentar as seguintes resources:
 
 * `module "dns"`
 * `output "fqdn"`
@@ -276,7 +276,7 @@ terraform apply plan.tfplan
 Podemos verificar que a nossa zona de DNS foi corretamente criada através do seguinte comando:
 
 ```bash
-gcloud dns managed-zones list | grep $(terraform output -raw my_identifier)
+gcloud dns managed-zones list --project $(terraform output -raw project_id) | grep $(terraform output -raw my_identifier)
 ```
 
 ### 3.2 Habilitar o `external-dns`
@@ -287,35 +287,12 @@ O `external-dns` é a *cola* entre o Kubernetes e o DNS.
 
 No ficheiro  é necessário passar o fqdn devolvido pelo modulo de dns.
 
-Descomentar a seguinte linha no ficheiro `./k8s.tf`:
+👉 Descomentar o modulo `external_dns` ficheiro `./k8s.external-dns.tf`:
 
-* `fqdn = module.dns.fqdn`
+* `module "external_dns"`
+* `output "fqdn"`
 
-No ficheiro `./modules/k8s/external-dns.tf` encontra-se a implementação do `external-dns` que permite atualizar os registos DNS automaticamente.
-
-Descomentar os seguintes recursos no ficheiro `./modules/k8s/external-dns.tf`:
-
-* `data "google_service_account" "gke_dns"`
-* `data "kubernetes_namespace" "external_dns"`
-* `resource "helm_release" "external_dns"`
-
-Executar `terraform init` para re-inicializar o modulo:
-
-```bash
-terraform init
-```
-
-**Why**: A razão que temos que voltar a executar o `terraform init` é porque descomentámos o valor de entrada `fqdn` no modulo `k8s.tf`_
-
-Executar o `plan` & `apply`:
-
-```bash
-terraform plan -out plan.tfplan
-```
-
-```bash
-terraform apply plan.tfplan
-```
+Na diretória `./modules/external-dns` encontra-se a implementação do modulo `external-dns` que permite atualizar os registos DNS automaticamente.
 
 ### 3.3 Criar um ponto de entrada (ingress) para o site
 
@@ -326,15 +303,18 @@ A criação do `ingress` será o culminar das últimas operações que efectuamo
 * Só será possivel aceder ao nosso site via internet se o expormos a partir de um ingress;
 * A criação do ingress irá despoletar a criação de um balanceador com um IP público bem como a geração de um certificado gerido pela Google;
 * Após a atribuição do IP, o `external-dns` irá atualizar o DNS com o respetivo IP;
-* Uma vez criado o registo no DNS, a GCE irá aprovisionar o certificado automaticamente;
-* ⏰ Todo o processo levará cerca de **10 minutos** a acontecer;
+* Uma vez criado o registo no DNS, o GCE irá aprovisionar o certificado automaticamente;
+* ⏰ Todo o processo pode levar até cerca de **10 minutos** a acontecer;
 
-No ficheiro `./modules/k8s/ingress.tf` iremos descomentar a secção 3.3 que fazer com que seja aprovisionado um ingress para o nosso site.
+👉 No ficheiro `./k8s.hipster.tf` iremos descomentar a secção **3.3** onde iremos modificar o comportamento do modulo da seguinte forma:
 
-Descomentar os seguintes recursos no ficheiro `./modules/k8s/ingress.tf`:
+1. Atribuir o `fqdn` dado pelo modulo de `dns`  á variável `fqdn`; o `fqdn` representa o domínio onde vai ser criado o host declarado pelo `ingress`.
 
-* `data "kubectl_path_documents" "hipster_ingress"`
-* `resource "kubectl_manifest" "hipster_ingress"`
+   * `fqdn = module.dns.fqdn`
+
+2. Ativar a criação dos manifestos de ingress através da variável boleana `ingress_enabled`.
+
+   * `ingress_enabled = true`
 
 Executar o `plan` & `apply`:
 
@@ -360,6 +340,12 @@ Também podemos verificar a atuação do `external-dns` assim que o ingress ganh
 
 ```bash
 kubectl logs -f -n external-dns -l app=external-dns
+```
+
+Ou então podemos verificar os registos no Cloud DNS:
+
+```bash
+gcloud dns record-sets list --zone $(terraform output -raw my_identifier)-dns --project $(terraform output -raw project_id)
 ```
 
 > 🚀 Infelizmente, devido ao tempo que a Google demora a gerar os certificados, o site só estará disponível quando o certificado for gerado e a *chain* estiver devidamente validada. Este processo leva cerca de **10 minutos** ⏰😡

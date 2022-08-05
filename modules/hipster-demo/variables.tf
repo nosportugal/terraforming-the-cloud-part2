@@ -8,3 +8,9 @@ variable "fqdn" {
   type        = string
   default     = ""
 }
+
+variable "ingress_enabled" {
+  description = "Controls if the ingress resources are applied."
+  type        = bool
+  default     = false
+}
