@@ -1,0 +1,41 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: hipster
+  namespace: hipster-demo
+spec:
+  domains:
+    - hipster.${fqdn}
+---
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: frontendconfig
+  namespace: hipster-demo
+spec:
+  redirectToHttps:
+    enabled: true
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hipster-ingress
+  namespace: hipster-demo
+  annotations:
+    # If the class annotation is not specified it defaults to "gce".
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "true"
+    networking.gke.io/managed-certificates: hipster
+    networking.gke.io/v1beta1.FrontendConfig: "frontendconfig"
+spec:
+  rules:
+    - host: hipster.${fqdn}
+      http:
+        paths:
+        - path: /*
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: frontend
+              port:
+                number: 80

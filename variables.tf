@@ -14,7 +14,7 @@ variable "region" {
 variable "gke_location" {
   description = "location for the gke cluster. Will default to region if not specified."
   type        = string
-  default     = "europe-west1-b"
+  default     = "europe-west1"
 }
 
 variable "sa_gke_dns" {

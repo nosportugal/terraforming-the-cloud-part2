@@ -1,8 +1,9 @@
 ## DNS management
 locals {
-  fqdn = "${var.prefix}.${data.google_dns_managed_zone.lab_01_clg_nos_pt.dns_name}"
+  fqdn = trim(local.dns.dns_name, ".")
   dns = {
     parent_zone_name = "dns-lab-01"
+    dns_name = "${var.prefix}.${data.google_dns_managed_zone.lab_01_clg_nos_pt.dns_name}"
   }
 }
 
@@ -22,7 +23,7 @@ data "google_dns_managed_zone" "lab_01_clg_nos_pt" {
 # mas será algo tipo my-prefix.lab-01.clg.nos.pt
 resource "google_dns_managed_zone" "this" {
   name     = "${var.prefix}-dns"
-  dns_name = local.fqdn
+  dns_name = local.dns.dns_name
   project  = data.google_project.this.name
 
   # Set this true to delete all records in the zone.
@@ -35,7 +36,7 @@ resource "google_dns_record_set" "parent_ns" {
   managed_zone = data.google_dns_managed_zone.lab_01_clg_nos_pt.name
   project      = data.google_dns_managed_zone.lab_01_clg_nos_pt.project
 
-  name    = local.fqdn
+  name    = local.dns.dns_name
   type    = "NS"
   ttl     = 300
   rrdatas = google_dns_managed_zone.this.name_servers

@@ -161,7 +161,7 @@ terraform apply plan.tfplan
 Podemos verificar que o nosso cluster foi corretamente criado através do comando:
 
 ```bash
-gcloud container clusters list --project tf-gke-lab-01-np-000001 | grep $(terraform output -raw my_identifier)
+gcloud container clusters list --project $(terraform output -raw project_id) | grep $(terraform output -raw my_identifier)
 ```
 
 *Também é possivel verificar o estado do cluster pela GUI [aqui](https://console.cloud.google.com/kubernetes/list?project=tf-gke-lab-01-np-000001).*
@@ -173,7 +173,7 @@ O acesso a um GKE, tal como qualquer outro cluster de Kubernetes, é feito a par
 Usar o comando `gcloud` para construir um `KUBECONFIG` válido para aceder ao cluster:
 
 ```bash
-export KUBECONFIG=$(pwd)/kubeconfig.yaml && gcloud container clusters get-credentials $(terraform output -raw gke_name) --zone $(terraform output -raw gke_location) --project tf-gke-lab-01-np-000001
+export KUBECONFIG=$(pwd)/kubeconfig.yaml && gcloud container clusters get-credentials $(terraform output -raw gke_name) --zone $(terraform output -raw gke_location) --project $(terraform output -raw project_id)
 ```
 
 Verificar o acesso ao cluster:
@@ -190,12 +190,12 @@ Trata-se de um provider da comunidade que tal como o nome indica, facilita a uti
 
 > *[from docs:](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs) This provider is the best way of managing Kubernetes resources in Terraform, by allowing you to use the thing Kubernetes loves best - yaml!*
 
-Para habilitar o modulo, temos que ir ao ficheiro `./k8s.tf` e descomentar o seguinte:
+Para habilitar o modulo, temos que ir ao ficheiro `./hipster.tf` e descomentar o seguinte modulo:
 
-* `module "k8s"`
+* `module "hipster"`
 * ❗❗ **não** descomentar a linha `fqdn`; será habilitado mais a frente ❗❗
 
-Os microserviços utilizados nesta demo, encontram-se [neste registry](https://console.cloud.google.com/gcr/images/google-samples/global/microservices-demo). Antes de inicializarem o módulo, verifiquem que as versões destes microserviços (passar pelos ficheiros `./k8s/hipster-demo/*.yaml` ) ainda existem.
+Os microserviços utilizados nesta demo, encontram-se [neste registry](https://console.cloud.google.com/gcr/images/google-samples/global/microservices-demo). Antes de inicializarem o módulo, verifiquem que as versões destes microserviços (passar pelos ficheiros `./hipster-demo/k8s/*.yaml` ) ainda existem.
 
 Executar `terraform init` para inicializar o modulo:
 
@@ -213,13 +213,15 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
+<sub>⏰ Após o `apply`, pode demorar uns minutos a acabar o comando pois o terraform espera que os pods estejam em `Running` state.</sub>
+
 Podemos verificar que os pods foram corretamente instanciados:
 
 ```bash
 kubectl get pods -n hipster-demo
 ```
 
-Também podemos constatar que o cluster-autoscaler teve que aprovisionar mais um node para acautelar o demand 😃🚀
+Também podemos constatar que o cluster-autoscaler teve que aprovisionar mais *nodes* para acautelar o demand 😃🚀
 
 ```bash
 kubectl get nodes
