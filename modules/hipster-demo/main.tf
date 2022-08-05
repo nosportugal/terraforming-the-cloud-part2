@@ -10,7 +10,7 @@ YAML
 }
 
 data "kubectl_path_documents" "hipster_workloads" {
-  pattern = "k8s/hipster-demo/1-*.yaml"
+  pattern = "${path.module}/k8s/1-*.yaml"
 }
 
 resource "kubectl_manifest" "hipster_workloads" {
@@ -23,7 +23,7 @@ resource "kubectl_manifest" "hipster_workloads" {
 }
 
 resource "kubectl_manifest" "hipster_loadgenerator" {
-  yaml_body = file("k8s/hipster-demo/200-loadgenerator.yaml")
+  yaml_body = file("${path.module}/k8s/200-loadgenerator.yaml")
 
   depends_on = [
     kubectl_manifest.hipster_workloads
