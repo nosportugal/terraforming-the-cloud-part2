@@ -389,4 +389,4 @@ terraform destroy
  [//]: # (INSERT IMAGE REFERENCES BELOW)
  [//]: # (*****************************)
 
-[tfc-arch]: https://github.com/nosportugal/terraforming-the-cloud-part2/raw/main/images/terraforming-the-cloud.png "Terraforming the cloud architecture"
+[tfc-arch]: https://github.com/nosportugal/terraforming-the-cloud-part2-2022-autopilot/raw/main/images/terraforming-the-cloud.png "Terraforming the cloud architecture"
