@@ -24,8 +24,8 @@ resource "google_container_cluster" "default" {
   }
 
   ip_allocation_policy {
-    cluster_ipv4_cidr_block  = "/16"
-    services_ipv4_cidr_block = "/24"
+    cluster_secondary_range_name  = data.google_compute_subnetwork.gke.secondary_ip_range[0].range_name
+    services_secondary_range_name = data.google_compute_subnetwork.gke.secondary_ip_range[1].range_name
   }
 
   private_cluster_config {
